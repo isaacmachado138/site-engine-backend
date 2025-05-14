@@ -70,9 +70,14 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 			for _, s := range c.Settings {
 				componentSettings[s.Key] = s.Value
 			}
+			componentTypeCode := ""
+			if c.Type != nil {
+				componentTypeCode = c.Type.Code
+			}
 			componentDTOs = append(componentDTOs, dtos.ComponentDTO{
 				ComponentID:       c.ID,
-				ComponentType:     c.Type,
+				ComponentTypeId:   c.TypeId,
+				ComponentTypeCode: componentTypeCode,
 				ComponentName:     c.Name,
 				ComponentSettings: componentSettings,
 			})

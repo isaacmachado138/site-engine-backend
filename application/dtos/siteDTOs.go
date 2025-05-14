@@ -35,9 +35,22 @@ type ComponentSettingDTO struct {
 	Value string `json:"value"`
 }
 
+// ComponentTypeDTO representa os dados do tipo de componente
+// para resposta em endpoints que retornam componentes
+// Pode ser expandido conforme necessário
+//
+type ComponentTypeDTO struct {
+	ComponentTypeId   uint   `json:"component_type_id"`
+	ComponentTypeCode string `json:"component_type_code"`
+	ComponentTypeDescription string `json:"component_type_description,omitempty"`
+	ComponentTypeUniqueInSite bool   `json:"component_type_unique_in_site,omitempty"`
+}
+
+// Atualize o ComponentDTO para incluir o tipo de componente
 type ComponentDTO struct {
 	ComponentID       uint              `json:"component_id"`
-	ComponentType     string            `json:"component_type"`
+	ComponentTypeId   string            `json:"component_type_id"`
+	ComponentTypeCode string            `json:"component_type_code"`
 	ComponentName     string            `json:"component_name"`
 	ComponentSettings map[string]string `json:"component_settings"`
 }

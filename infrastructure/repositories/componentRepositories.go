@@ -43,9 +43,9 @@ func (r *componentRepository) FindByModuleID(moduleID uint) ([]entities.Componen
 		componentIDs = append(componentIDs, mc.ComponentID)
 	}
 
-	// Buscar todos os componentes em uma única consulta
+	// Buscar todos os componentes em uma única consulta, incluindo o tipo
 	var components []entities.Component
-	if err := r.db.Preload("Settings").Where("component_id IN ?", componentIDs).Find(&components).Error; err != nil {
+	if err := r.db.Preload("Settings").Preload("Type").Where("component_id IN ?", componentIDs).Find(&components).Error; err != nil {
 		return nil, err
 	}
 

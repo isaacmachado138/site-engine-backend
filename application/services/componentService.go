@@ -21,7 +21,7 @@ func NewComponentService(componentRepository repositories.ComponentRepository) *
 // Create cria um novo componente
 func (s *ComponentService) Create(componentDTO dtos.ComponentCreateDTO) (*dtos.ComponentResponseDTO, error) {
 	component := &entities.Component{
-		Type:   componentDTO.ComponentType,
+		TypeId: componentDTO.ComponentTypeId,
 		Name:   componentDTO.ComponentName,
 		UserID: componentDTO.UserID,
 	}
@@ -31,9 +31,9 @@ func (s *ComponentService) Create(componentDTO dtos.ComponentCreateDTO) (*dtos.C
 	}
 
 	return &dtos.ComponentResponseDTO{
-		ComponentID:   component.ID,
-		ComponentType: component.Type,
-		ComponentName: component.Name,
-		UserId:        component.UserID, // Corrected field name to match DTO
+		ComponentID:     component.ID,
+		ComponentTypeId: component.TypeId,
+		ComponentName:   component.Name,
+		UserId:          component.UserID, // Corrected field name to match DTO
 	}, nil
 }
