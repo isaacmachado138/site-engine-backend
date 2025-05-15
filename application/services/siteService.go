@@ -44,6 +44,8 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 
 // GetBySlug busca um site pelo slug, incluindo módulos e componentes
 func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) {
+
+	// Buscando o site pelo slug
 	site, err := s.siteRepository.FindBySlug(slug)
 	if err != nil {
 		return nil, err
@@ -52,11 +54,13 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 		return nil, errors.New("site not found")
 	}
 
+	// Buscando os módulos associados ao site
 	modules, err := s.moduleRepository.FindBySiteID(site.ID)
 	if err != nil {
 		return nil, err
 	}
 
+	// Buscando os componentes associados a cada módulo
 	var modulesWithComponents []dtos.ModuleWithComponentsDTO
 	for _, module := range modules {
 		components, err := s.componentRepository.FindByModuleID(module.ID)
@@ -74,6 +78,7 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 			if c.Type != nil {
 				componentTypeCode = c.Type.Code
 			}
+			// Adicionando o tipo de componente ao DTO
 			componentDTOs = append(componentDTOs, dtos.ComponentDTO{
 				ComponentID:       c.ID,
 				ComponentTypeId:   c.TypeId,
@@ -83,6 +88,7 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 			})
 		}
 
+		// Adicionando o módulo e seus componentes ao DTO
 		modulesWithComponents = append(modulesWithComponents, dtos.ModuleWithComponentsDTO{
 			ModuleID:   module.ID,
 			ModuleName: module.Name,
@@ -91,10 +97,55 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 		})
 	}
 
+	// Buscar componente único do tipo navbar
+	navbarComponent, _ := s.componentRepository.FindUniqueBySiteAndTypeCodeLike(site.ID, "navbar")
+	var navbarDTO *dtos.ComponentDTO
+	if navbarComponent != nil {
+		settings := make(map[string]string)
+		for _, s := range navbarComponent.Settings {
+			settings[s.Key] = s.Value
+		}
+		typeCode := ""
+		if navbarComponent.Type != nil {
+			typeCode = navbarComponent.Type.Code
+		}
+		navbarDTO = &dtos.ComponentDTO{
+			ComponentID:       navbarComponent.ID,
+			ComponentTypeId:   navbarComponent.TypeId,
+			ComponentTypeCode: typeCode,
+			ComponentName:     navbarComponent.Name,
+			ComponentSettings: settings,
+		}
+	}
+
+	// Buscar componente único do tipo footer
+	footerComponent, _ := s.componentRepository.FindUniqueBySiteAndTypeCodeLike(site.ID, "footer")
+	var footerDTO *dtos.ComponentDTO
+	if footerComponent != nil {
+		settings := make(map[string]string)
+		for _, s := range footerComponent.Settings {
+			settings[s.Key] = s.Value
+		}
+		typeCode := ""
+		if footerComponent.Type != nil {
+			typeCode = footerComponent.Type.Code
+		}
+		footerDTO = &dtos.ComponentDTO{
+			ComponentID:       footerComponent.ID,
+			ComponentTypeId:   footerComponent.TypeId,
+			ComponentTypeCode: typeCode,
+			ComponentName:     footerComponent.Name,
+			ComponentSettings: settings,
+		}
+	}
+
+	// Retornando o DTO completo do site
 	return &dtos.SiteFullResponseDTO{
 		SiteID:   site.ID,
 		SiteName: site.Name,
 		SiteSlug: site.Slug,
 		Modules:  modulesWithComponents,
+		Navbar:   navbarDTO,
+		Footer:   footerDTO,
 	}, nil
 }

@@ -51,3 +51,27 @@ func (r *componentRepository) FindByModuleID(moduleID uint) ([]entities.Componen
 
 	return components, nil
 }
+
+// Busca componente único por site e code exato
+func (r *componentRepository) FindUniqueBySiteAndTypeCode(siteID uint, typeCode string) (*entities.Component, error) {
+	var component entities.Component
+	err := r.db.Preload("Settings").Preload("Type").Joins("JOIN component_type ON component.component_type_id = component_type.component_type_id").
+		Where("component.site_id = ? AND component_type.component_type_code = ? AND component_type.component_type_unique_in_site = 1", siteID, typeCode).
+		First(&component).Error
+	if err != nil {
+		return nil, err
+	}
+	return &component, nil
+}
+
+// Busca componente único por site e code LIKE (ex: navbar, footer)
+func (r *componentRepository) FindUniqueBySiteAndTypeCodeLike(siteID uint, typeCodeLike string) (*entities.Component, error) {
+	var component entities.Component
+	err := r.db.Preload("Settings").Preload("Type").Joins("JOIN component_type ON component.component_type_id = component_type.component_type_id").
+		Where("component.site_id = ? AND component_type.component_type_code LIKE ? AND component_type.component_type_unique_in_site = 1", siteID, "%"+typeCodeLike+"%").
+		First(&component).Error
+	if err != nil {
+		return nil, err
+	}
+	return &component, nil
+}

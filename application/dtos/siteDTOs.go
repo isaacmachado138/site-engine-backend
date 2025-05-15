@@ -20,6 +20,8 @@ type SiteFullResponseDTO struct {
 	SiteName string                    `json:"site_name"`
 	SiteSlug string                    `json:"site_slug"`
 	Modules  []ModuleWithComponentsDTO `json:"modules"`
+	Navbar   *ComponentDTO             `json:"navbar,omitempty"`
+	Footer   *ComponentDTO             `json:"footer,omitempty"`
 }
 
 type ModuleWithComponentsDTO struct {
