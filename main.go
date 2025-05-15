@@ -11,10 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
-	"myapp/application/services"
 	"myapp/config"
 	"myapp/infrastructure/database"
-	"myapp/infrastructure/repositories"
 	"myapp/presentation/routes"
 )
 
@@ -39,20 +37,11 @@ func main() {
 	router := gin.Default()
 	router.SetTrustedProxies(nil) // Remover o aviso de proxies confiáveis
 
-	// Criar instâncias dos repositórios
-	userRepo := repositories.NewUserRepository(db)
-	siteRepo := repositories.NewSiteRepository(db)
-	moduleRepo := repositories.NewModuleRepository(db)
-	componentRepo := repositories.NewComponentRepository(db)
-
-	// Criar instâncias dos serviços
-	userService := services.NewUserService(userRepo)
-	siteService := services.NewSiteService(siteRepo, moduleRepo, componentRepo)
-	moduleService := services.NewModuleService(moduleRepo)
-	componentService := services.NewComponentService(componentRepo)
+	// Setup dependências
+	deps := config.SetupDependencies(db)
 
 	// Configurar rotas com os serviços
-	routes.SetupRoutes(router, userService, siteService, moduleService, componentService)
+	routes.SetupRoutes(router, deps)
 
 	// Iniciar o servidor em uma goroutine
 	serverAddr := fmt.Sprintf(":%s", cfg.ServerPort)

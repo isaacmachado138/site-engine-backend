@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"myapp/application/services"
+	"myapp/config"
 	"myapp/presentation/handlers"
 	"net/http"
 	"time"
@@ -12,12 +12,15 @@ import (
 )
 
 // SetupRoutes configura todas as rotas da API
-func SetupRoutes(router *gin.Engine, userService *services.UserService, siteService *services.SiteService, moduleService *services.ModuleService, componentService *services.ComponentService) {
-	// Inicializar handlers
-	userHandler := handlers.NewUserHandler(userService)
-	siteHandler := handlers.NewSiteHandler(siteService)
-	moduleHandler := handlers.NewModuleHandler(moduleService)
-	componentHandler := handlers.NewComponentHandler(componentService)
+func SetupRoutes(router *gin.Engine, deps interface{}) {
+	// Type assertion para o struct de dependências
+	appDeps := deps.(*config.AppDependencies)
+
+	userHandler := handlers.NewUserHandler(appDeps.UserService)
+	siteHandler := handlers.NewSiteHandler(appDeps.SiteService)
+	moduleHandler := handlers.NewModuleHandler(appDeps.ModuleService)
+	componentHandler := handlers.NewComponentHandler(appDeps.ComponentService)
+	componentSettingHandler := handlers.NewComponentSettingHandler(appDeps.ComponentSettingService)
 
 	// Definir grupo base da API
 	api := router.Group("/api")
@@ -36,6 +39,9 @@ func SetupRoutes(router *gin.Engine, userService *services.UserService, siteServ
 
 		// Rota para buscar site por slug
 		api.GET("/site/:slug", siteHandler.GetBySlug)
+
+		// Rota para settings de componentes
+		api.POST("/site/component/:componentId/setting", componentSettingHandler.UpsertMany)
 	}
 }
 
