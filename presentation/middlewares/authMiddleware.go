@@ -2,17 +2,13 @@ package middlewares
 
 import (
 	"fmt"
+	"myapp/application/dtos"
+	"myapp/application/services"
 	"net/http"
-	"strings"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-
-	// Importações internas do projeto
-	"myapp/application/dtos"
-	"myapp/application/services"
-	"myapp/config"
 )
 
 // TokenExtractor é um middleware que extrai o token JWT de diferentes fontes na requisição
@@ -21,37 +17,30 @@ import (
 // middlewares subsequentes.
 func TokenExtractor() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var token string
+		fmt.Printf("[LOG] TokenExtractor chamado para rota: %s\n", c.Request.URL.Path)
+		// Só executa se o header Authorization ainda não existe
+		if c.GetHeader("Authorization") == "" {
+			var token string
 
-		// 1. Tenta obter do cookie - primeira fonte de prioridade
-		token, _ = c.Cookie("jwt")
-		if token == "" {
-			token, _ = c.Cookie("token") // fallback para cookie alternativo
-		}
+			// 1. Tenta obter do cookie - primeira fonte de prioridade
+			token, _ = c.Cookie("jwt")
+			if token == "" {
+				token, _ = c.Cookie("token") // fallback para cookie alternativo
+			}
 
-		// 2. Tenta obter do header Authorization - segunda fonte de prioridade
-		if token == "" {
-			auth := c.GetHeader("Authorization")
-			if auth != "" && strings.HasPrefix(auth, "Bearer ") {
-				// Remove o prefixo "Bearer " para extrair apenas o token
-				token = strings.TrimPrefix(auth, "Bearer ")
+			// 2. Tenta obter de query parameter - última fonte de prioridade
+			if token == "" {
+				token = c.Query("token")
+			}
+
+			// Só adiciona o header se o token realmente existir e não for vazio
+			if token != "" && len(token) > 10 { // JWTs válidos costumam ser maiores que 10 caracteres
+				c.Request.Header.Set("Authorization", "Bearer "+token)
+				fmt.Printf("TokenExtractor: Token encontrado\n")
+			} else {
+				fmt.Printf("TokenExtractor: Nenhum token encontrado ou token muito curto\n")
 			}
 		}
-
-		// 3. Tenta obter de query parameter - última fonte de prioridade
-		if token == "" {
-			token = c.Query("token")
-		}
-
-		// Se um token foi encontrado em qualquer fonte, adicionamos ao header de Autorização
-		// para que possa ser processado pelos middlewares de autenticação JWT
-		if token != "" {
-			c.Request.Header.Set("Authorization", "Bearer "+token)
-			fmt.Printf("TokenExtractor: Token encontrado\n")
-		} else {
-			fmt.Printf("TokenExtractor: Nenhum token encontrado\n")
-		}
-
 		// Continua a execução da cadeia de middlewares
 		c.Next()
 	}
@@ -91,16 +80,14 @@ type login struct {
 }
 
 // SetupJWTMiddleware configura e retorna uma instância do middleware JWT para autenticação
-// recebendo uma instância do serviço de usuário e configurações do sistema.
-// Este middleware gerencia todo o ciclo de vida do JWT incluindo autenticação, geração,
-// verificação e renovação de tokens.
-func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (*jwt.GinJWTMiddleware, error) {
+// Recebe uma instância do serviço de usuário e o segredo JWT.
+func SetupJWTMiddleware(userService *services.UserService, jwtSecret string) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
-		Realm:       "library-api",         // Nome do domínio de autenticação
-		Key:         []byte(cfg.JWTSecret), // Chave secreta para assinatura dos tokens
-		Timeout:     time.Hour * 24,        // Duração de validade do token: 24 horas
-		MaxRefresh:  time.Hour * 24 * 7,    // Período máximo em que o token pode ser renovado: 7 dias
-		IdentityKey: "id",                  // Chave que identifica o usuário nas claims
+		Realm:       "library-api",      // Nome do domínio de autenticação
+		Key:         []byte(jwtSecret),  // Chave secreta para assinatura dos tokens
+		Timeout:     time.Hour * 24,     // Duração de validade do token: 24 horas
+		MaxRefresh:  time.Hour * 24 * 7, // Período máximo em que o token pode ser renovado: 7 dias
+		IdentityKey: "id",               // Chave que identifica o usuário nas claims
 
 		// Configurações de cookies de autenticação
 		SendCookie:     true,                     // Envia token como cookie
@@ -142,6 +129,7 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 				UserID:    user.ID,
 				UserName:  user.Name,
 				UserEmail: user.Email,
+				Admin:     user.Admin,
 			}
 
 			fmt.Printf("Criando token com user info: ID=%d, Email=%s\n",
@@ -162,8 +150,9 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 
 				// Define as claims que serão adicionadas ao token JWT
 				return jwt.MapClaims{
-					"id":    user.UserID,
-					"email": user.UserEmail,
+					"id":       user.UserID,
+					"email":    user.UserEmail,
+					"is_admin": user.Admin == 1,
 				}
 			}
 
@@ -182,8 +171,8 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 			fmt.Printf("IdentityHandler - Claims recebidas: %+v\n", claims)
 
 			// Verifica se todas as claims necessárias estão presentes
-			idVal, idExists := claims["ID"]
-			emailVal, emailExists := claims["Email"]
+			idVal, idExists := claims["id"]
+			emailVal, emailExists := claims["email"]
 
 			if !idExists || !emailExists {
 				fmt.Printf("ALERTA: JWT incompleto ou inválido. Claims: %+v\n", claims)
@@ -207,11 +196,14 @@ func SetupJWTMiddleware(userService *services.UserService, cfg *config.Config) (
 		},
 
 		// Authorizator: define regras de autorização após a autenticação
-		// Aqui estamos permitindo acesso a qualquer usuário autenticado
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			// Nesta implementação básica, qualquer usuário autenticado está autorizado
-			// Para regras de autorização específicas, este é o lugar para implementá-las
-			return true
+			claims := jwt.ExtractClaims(c)
+			isAdmin, exists := claims["is_admin"]
+			if exists && isAdmin == true {
+				return true
+			}
+			// Aqui você pode adicionar lógica extra para não-admins depois
+			return false
 		},
 
 		// LoginResponse: personaliza a resposta HTTP em caso de login bem-sucedido

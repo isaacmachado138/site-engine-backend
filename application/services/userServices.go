@@ -43,6 +43,7 @@ func (s *UserService) Create(userDTO dtos.UserCreateDTO) (*dtos.UserResponseDTO,
 		Name:     userDTO.UserName,
 		Email:    userDTO.UserEmail,
 		Password: string(hashedPassword),
+		Admin:    0, // Sempre criar como não admin
 	}
 
 	if err := s.userRepository.Create(user); err != nil {

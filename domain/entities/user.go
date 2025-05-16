@@ -7,6 +7,7 @@ type User struct {
 	Email    string `gorm:"column:user_email;size:100;not null;unique"`
 	Password string `gorm:"column:user_password;size:255;not null"`
 	Del      int    `gorm:"column:user_del;default:0"`
+	Admin    int    `gorm:"column:user_admin;default:0"`
 	Sites    []Site `gorm:"foreignKey:UserID;references:user_id"`
 }
 

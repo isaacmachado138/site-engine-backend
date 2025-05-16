@@ -22,6 +22,7 @@ type UserResponseDTO struct {
 	UserID    uint   `json:"user_id"`
 	UserName  string `json:"user_name"`
 	UserEmail string `json:"user_email"`
+	Admin     int    `json:"user_admin"`
 }
 
 // ToResponseDTO converte uma entidade User para um UserResponseDTO
@@ -30,5 +31,6 @@ func ToResponseDTO(user entities.User) UserResponseDTO {
 		UserID:    user.ID,
 		UserName:  user.Name,
 		UserEmail: user.Email,
+		Admin:     user.Admin,
 	}
 }

@@ -38,7 +38,7 @@ func main() {
 	router.SetTrustedProxies(nil) // Remover o aviso de proxies confiáveis
 
 	// Setup dependências
-	deps := config.SetupDependencies(db)
+	deps := config.SetupDependencies(db, cfg)
 
 	// Configurar rotas com os serviços
 	routes.SetupRoutes(router, deps)

@@ -3,6 +3,7 @@ package routes
 import (
 	"myapp/config"
 	"myapp/presentation/handlers"
+	"myapp/presentation/middlewares"
 	"net/http"
 	"time"
 
@@ -22,11 +23,16 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 	componentHandler := handlers.NewComponentHandler(appDeps.ComponentService)
 	componentSettingHandler := handlers.NewComponentSettingHandler(appDeps.ComponentSettingService)
 
-	// Definir grupo base da API
+	// Usa setupAuthRoutes para configurar rotas de autenticação (apenas login e refresh agora)
+	setupAuthRoutes(router, appDeps.JWTMiddleware)
+
+	// Definir grupo base da API protegido
 	api := router.Group("/api")
+	api.Use(middlewares.TokenExtractor()) // Adiciona o TokenExtractor corretamente
+	api.Use(appDeps.JWTMiddleware.MiddlewareFunc())
 	{
-		// Rotas de usuários
-		api.POST("/user/register", userHandler.Register)
+		// Rota de criação de usuário agora exige autenticação e admin
+		api.POST("/user/register", middlewares.AdminRequired(), userHandler.Register)
 
 		// Rotas de sites
 		api.POST("/site", siteHandler.Create)
@@ -106,12 +112,9 @@ func setupHealthRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	})
 }
 
-// setupAuthRoutes configura rotas de autenticação
-func setupAuthRoutes(router *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
-	auth := router.Group("/auth")
-	{
-		// Rotas públicas de autenticação
-		auth.POST("/login", authMiddleware.LoginHandler)
-		auth.GET("/refresh", authMiddleware.RefreshHandler)
-	}
+// setupAuthRoutes configura rotas de autenticação (login e refresh)
+func setupAuthRoutes(router *gin.Engine, authMiddleware *jwt.GinJWTMiddleware) {
+	auth := router.Group("/api/auth")
+	auth.POST("/login", authMiddleware.LoginHandler)
+	auth.GET("/refresh", authMiddleware.RefreshHandler)
 }

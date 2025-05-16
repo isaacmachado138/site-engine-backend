@@ -3,7 +3,9 @@ package config
 import (
 	"myapp/application/services"
 	"myapp/infrastructure/repositories"
+	"myapp/presentation/middlewares"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"gorm.io/gorm"
 )
 
@@ -13,20 +15,25 @@ type AppDependencies struct {
 	ModuleService           *services.ModuleService
 	ComponentService        *services.ComponentService
 	ComponentSettingService *services.ComponentSettingService
+	JWTMiddleware           *jwt.GinJWTMiddleware
 }
 
-func SetupDependencies(db *gorm.DB) *AppDependencies {
+func SetupDependencies(db *gorm.DB, cfg *Config) *AppDependencies {
 	userRepo := repositories.NewUserRepository(db)
 	siteRepo := repositories.NewSiteRepository(db)
 	moduleRepo := repositories.NewModuleRepository(db)
 	componentRepo := repositories.NewComponentRepository(db)
 	componentSettingRepo := repositories.NewComponentSettingRepository(db)
 
+	userService := services.NewUserService(userRepo)
+	jwtMiddleware, _ := middlewares.SetupJWTMiddleware(userService, cfg.JWTSecret)
+
 	return &AppDependencies{
-		UserService:             services.NewUserService(userRepo),
+		UserService:             userService,
 		SiteService:             services.NewSiteService(siteRepo, moduleRepo, componentRepo),
 		ModuleService:           services.NewModuleService(moduleRepo),
 		ComponentService:        services.NewComponentService(componentRepo),
 		ComponentSettingService: services.NewComponentSettingService(componentSettingRepo),
+		JWTMiddleware:           jwtMiddleware,
 	}
 }
