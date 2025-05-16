@@ -43,12 +43,12 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 		// Rotas de componentes
 		api.POST("/site/component", componentHandler.Create)
 
-		// Rota para buscar site por slug
-		api.GET("/site/:slug", siteHandler.GetBySlug)
-
 		// Rota para settings de componentes
 		api.POST("/site/component/:componentId/setting", componentSettingHandler.UpsertMany)
 	}
+
+	// Rota pública para buscar site por slug
+	router.GET("/api/site/:slug", siteHandler.GetBySlug)
 }
 
 // setupHealthRoutes configura rotas de health check
