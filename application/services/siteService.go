@@ -26,9 +26,10 @@ func NewSiteService(siteRepository repositories.SiteRepository, moduleRepository
 // Create cria um novo site
 func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO, error) {
 	site := &entities.Site{
-		Name:   siteDTO.SiteName,
-		Slug:   siteDTO.SiteSlug,
-		UserID: siteDTO.UserID,
+		Name:           siteDTO.SiteName,
+		Slug:           siteDTO.SiteSlug,
+		UserID:         siteDTO.UserID,
+		SiteIconWindow: siteDTO.SiteIconWindow,
 	}
 
 	if err := s.siteRepository.Create(site); err != nil {
@@ -36,9 +37,10 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 	}
 
 	return &dtos.SiteResponseDTO{
-		SiteID:   site.ID,
-		SiteName: site.Name,
-		SiteSlug: site.Slug,
+		SiteID:         site.ID,
+		SiteName:       site.Name,
+		SiteSlug:       site.Slug,
+		SiteIconWindow: site.SiteIconWindow,
 	}, nil
 }
 
@@ -141,11 +143,12 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 
 	// Retornando o DTO completo do site
 	return &dtos.SiteFullResponseDTO{
-		SiteID:   site.ID,
-		SiteName: site.Name,
-		SiteSlug: site.Slug,
-		Modules:  modulesWithComponents,
-		Navbar:   navbarDTO,
-		Footer:   footerDTO,
+		SiteID:         site.ID,
+		SiteName:       site.Name,
+		SiteSlug:       site.Slug,
+		SiteIconWindow: site.SiteIconWindow,
+		Modules:        modulesWithComponents,
+		Navbar:         navbarDTO,
+		Footer:         footerDTO,
 	}, nil
 }

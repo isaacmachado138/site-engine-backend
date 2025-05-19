@@ -2,26 +2,29 @@ package dtos
 
 // SiteCreateDTO representa os dados necessários para criar um site
 type SiteCreateDTO struct {
-	SiteName string `json:"site_name" binding:"required"`
-	SiteSlug string `json:"site_slug" binding:"required"`
-	UserID   uint   `json:"user_id" binding:"required"`
+	SiteName       string `json:"site_name" binding:"required"`
+	SiteSlug       string `json:"site_slug" binding:"required"`
+	UserID         uint   `json:"user_id" binding:"required"`
+	SiteIconWindow string `json:"site_icon_window"`
 }
 
 // SiteResponseDTO representa os dados retornados após a criação de um site
 type SiteResponseDTO struct {
-	SiteID   uint   `json:"site_id"`
-	SiteName string `json:"site_name"`
-	SiteSlug string `json:"site_slug"`
+	SiteID         uint   `json:"site_id"`
+	SiteName       string `json:"site_name"`
+	SiteSlug       string `json:"site_slug"`
+	SiteIconWindow string `json:"site_icon_window"`
 }
 
 // SiteFullResponseDTO representa o site completo com módulos e componentes
 type SiteFullResponseDTO struct {
-	SiteID   uint                      `json:"site_id"`
-	SiteName string                    `json:"site_name"`
-	SiteSlug string                    `json:"site_slug"`
-	Modules  []ModuleWithComponentsDTO `json:"modules"`
-	Navbar   *ComponentDTO             `json:"navbar,omitempty"`
-	Footer   *ComponentDTO             `json:"footer,omitempty"`
+	SiteID         uint                      `json:"site_id"`
+	SiteName       string                    `json:"site_name"`
+	SiteSlug       string                    `json:"site_slug"`
+	SiteIconWindow string                    `json:"site_icon_window"`
+	Modules        []ModuleWithComponentsDTO `json:"modules"`
+	Navbar         *ComponentDTO             `json:"navbar,omitempty"`
+	Footer         *ComponentDTO             `json:"footer,omitempty"`
 }
 
 type ModuleWithComponentsDTO struct {
@@ -42,9 +45,9 @@ type ComponentSettingDTO struct {
 // Pode ser expandido conforme necessário
 //
 type ComponentTypeDTO struct {
-	ComponentTypeId   uint   `json:"component_type_id"`
-	ComponentTypeCode string `json:"component_type_code"`
-	ComponentTypeDescription string `json:"component_type_description,omitempty"`
+	ComponentTypeId           uint   `json:"component_type_id"`
+	ComponentTypeCode         string `json:"component_type_code"`
+	ComponentTypeDescription  string `json:"component_type_description,omitempty"`
 	ComponentTypeUniqueInSite bool   `json:"component_type_unique_in_site,omitempty"`
 }
 
