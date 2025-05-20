@@ -9,6 +9,7 @@ type ComponentItemDTO struct {
 	ComponentItemText         string `json:"component_item_text"`
 	ComponentItemImage        string `json:"component_item_image"`
 	ComponentItemOrder        int    `json:"component_item_order"`
+	ComponentItemLink         string `json:"component_item_link"`
 }
 
 type ComponentItemUpsertManyDTO struct {
