@@ -92,6 +92,7 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 					ComponentItemText:         item.ComponentItemText,
 					ComponentItemImage:        item.ComponentItemImage,
 					ComponentItemOrder:        item.ComponentItemOrder,
+					ComponentItemLink:         item.ComponentItemLink,
 				})
 			}
 			componentSettings["items"] = itemsDTO
