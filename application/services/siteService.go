@@ -81,12 +81,26 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 				componentTypeCode = c.Type.Code
 			}
 			// Adicionando o tipo de componente ao DTO
+			var itemsDTO []dtos.ComponentItemDTO
+			for _, item := range c.Items {
+				itemsDTO = append(itemsDTO, dtos.ComponentItemDTO{
+					ComponentItemID:           item.ComponentItemID,
+					ComponentID:               item.ComponentID,
+					ComponentItemTitle:        item.ComponentItemTitle,
+					ComponentItemSubtitle:     item.ComponentItemSubtitle,
+					ComponentItemSubtitleType: item.ComponentItemSubtitleType,
+					ComponentItemText:         item.ComponentItemText,
+					ComponentItemImage:        item.ComponentItemImage,
+					ComponentItemOrder:        item.ComponentItemOrder,
+				})
+			}
 			componentDTOs = append(componentDTOs, dtos.ComponentDTO{
 				ComponentID:       c.ID,
 				ComponentTypeId:   c.TypeId,
 				ComponentTypeCode: componentTypeCode,
 				ComponentName:     c.Name,
 				ComponentSettings: componentSettings,
+				Items:             itemsDTO,
 			})
 		}
 

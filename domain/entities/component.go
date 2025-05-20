@@ -9,6 +9,7 @@ type Component struct {
 	SiteId   uint               `gorm:"column:site_id;not null"`
 	UserID   uint               `gorm:"column:user_id;not null"`
 	Settings []ComponentSetting `gorm:"foreignKey:ComponentID;references:ID"`
+	Items    []ComponentItem    `gorm:"foreignKey:ComponentID;references:ID"`
 }
 
 func (Component) TableName() string {

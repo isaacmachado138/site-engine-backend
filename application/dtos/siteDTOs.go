@@ -53,9 +53,10 @@ type ComponentTypeDTO struct {
 
 // Atualize o ComponentDTO para incluir o tipo de componente
 type ComponentDTO struct {
-	ComponentID       uint              `json:"component_id"`
-	ComponentTypeId   string            `json:"component_type_id"`
-	ComponentTypeCode string            `json:"component_type_code"`
-	ComponentName     string            `json:"component_name"`
-	ComponentSettings map[string]string `json:"component_settings"`
+	ComponentID       uint               `json:"component_id"`
+	ComponentTypeId   string             `json:"component_type_id"`
+	ComponentTypeCode string             `json:"component_type_code"`
+	ComponentName     string             `json:"component_name"`
+	ComponentSettings map[string]string  `json:"component_settings"`
+	Items             []ComponentItemDTO `json:"items"` // <-- Adicionado para trazer os items do componente
 }
