@@ -72,7 +72,7 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 
 		var componentDTOs []dtos.ComponentDTO
 		for _, c := range components {
-			componentSettings := make(map[string]string)
+			componentSettings := make(map[string]interface{})
 			for _, s := range c.Settings {
 				componentSettings[s.Key] = s.Value
 			}
@@ -94,13 +94,13 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 					ComponentItemOrder:        item.ComponentItemOrder,
 				})
 			}
+			componentSettings["items"] = itemsDTO
 			componentDTOs = append(componentDTOs, dtos.ComponentDTO{
 				ComponentID:       c.ID,
 				ComponentTypeId:   c.TypeId,
 				ComponentTypeCode: componentTypeCode,
 				ComponentName:     c.Name,
 				ComponentSettings: componentSettings,
-				Items:             itemsDTO,
 			})
 		}
 
@@ -117,7 +117,7 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 	navbarComponent, _ := s.componentRepository.FindUniqueBySiteAndTypeCodeLike(site.ID, "navbar")
 	var navbarDTO *dtos.ComponentDTO
 	if navbarComponent != nil {
-		settings := make(map[string]string)
+		settings := make(map[string]interface{})
 		for _, s := range navbarComponent.Settings {
 			settings[s.Key] = s.Value
 		}
@@ -138,7 +138,7 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 	footerComponent, _ := s.componentRepository.FindUniqueBySiteAndTypeCodeLike(site.ID, "footer")
 	var footerDTO *dtos.ComponentDTO
 	if footerComponent != nil {
-		settings := make(map[string]string)
+		settings := make(map[string]interface{})
 		for _, s := range footerComponent.Settings {
 			settings[s.Key] = s.Value
 		}
