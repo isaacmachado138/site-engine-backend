@@ -22,6 +22,7 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 	moduleHandler := handlers.NewModuleHandler(appDeps.ModuleService)
 	componentHandler := handlers.NewComponentHandler(appDeps.ComponentService)
 	componentSettingHandler := handlers.NewComponentSettingHandler(appDeps.ComponentSettingService)
+	componentItemHandler := handlers.NewComponentItemHandler(appDeps.ComponentItemService)
 
 	// Usa setupAuthRoutes para configurar rotas de autenticação (apenas login e refresh agora)
 	setupAuthRoutes(router, appDeps.JWTMiddleware)
@@ -45,6 +46,10 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 
 		// Rota para settings de componentes
 		api.POST("/site/component/:componentId/setting", componentSettingHandler.UpsertMany)
+
+		// Rotas para items de componentes
+		api.POST("/site/component/:componentId/items", componentItemHandler.UpsertMany)
+		api.GET("/site/component/:componentId/items", componentItemHandler.FindByComponentID)
 	}
 
 	// Rota pública para buscar site por slug

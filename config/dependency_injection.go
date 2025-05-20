@@ -15,6 +15,7 @@ type AppDependencies struct {
 	ModuleService           *services.ModuleService
 	ComponentService        *services.ComponentService
 	ComponentSettingService *services.ComponentSettingService
+	ComponentItemService    *services.ComponentItemService
 	JWTMiddleware           *jwt.GinJWTMiddleware
 }
 
@@ -24,6 +25,7 @@ func SetupDependencies(db *gorm.DB, cfg *Config) *AppDependencies {
 	moduleRepo := repositories.NewModuleRepository(db)
 	componentRepo := repositories.NewComponentRepository(db)
 	componentSettingRepo := repositories.NewComponentSettingRepository(db)
+	componentItemRepo := repositories.NewComponentItemRepository(db)
 
 	userService := services.NewUserService(userRepo)
 	jwtMiddleware, _ := middlewares.SetupJWTMiddleware(userService, cfg.JWTSecret)
@@ -34,6 +36,7 @@ func SetupDependencies(db *gorm.DB, cfg *Config) *AppDependencies {
 		ModuleService:           services.NewModuleService(moduleRepo),
 		ComponentService:        services.NewComponentService(componentRepo),
 		ComponentSettingService: services.NewComponentSettingService(componentSettingRepo),
+		ComponentItemService:    services.NewComponentItemService(componentItemRepo),
 		JWTMiddleware:           jwtMiddleware,
 	}
 }
