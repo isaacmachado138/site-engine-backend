@@ -54,6 +54,9 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 
 	// Rota pública para buscar site por slug
 	router.GET("/api/site/:slug", siteHandler.GetBySlug)
+
+	// Rota para buscar todos os sites de um usuário
+	router.GET("/api/:userId/sites", siteHandler.GetSitesByUser)
 }
 
 // setupHealthRoutes configura rotas de health check

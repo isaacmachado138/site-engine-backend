@@ -13,6 +13,7 @@ type SiteResponseDTO struct {
 	SiteID         uint   `json:"site_id"`
 	SiteName       string `json:"site_name"`
 	SiteSlug       string `json:"site_slug"`
+	UserID         uint   `json:"user_id"`
 	SiteIconWindow string `json:"site_icon_window"`
 }
 

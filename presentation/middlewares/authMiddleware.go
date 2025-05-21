@@ -135,6 +135,9 @@ func SetupJWTMiddleware(userService *services.UserService, jwtSecret string) (*j
 			fmt.Printf("Criando token com user info: ID=%d, Email=%s\n",
 				userDTO.UserID, userDTO.UserEmail)
 
+			// Salva o objeto user no contexto para ser usado no LoginResponse
+			c.Set("user", userDTO)
+
 			return userDTO, nil
 		},
 
@@ -212,10 +215,13 @@ func SetupJWTMiddleware(userService *services.UserService, jwtSecret string) (*j
 			fmt.Printf("Token gerado: %s\n", token)
 			fmt.Printf("Expira em: %v\n", expire)
 
-			// Retorna o token e sua data de expiração no corpo da resposta
+			// Recupera o objeto user do contexto (armazenado pelo Authenticator)
+			user, _ := c.Get("user")
+
 			c.JSON(code, gin.H{
 				"token":  token,
 				"expire": expire.Format(time.RFC3339),
+				"user":   user,
 			})
 		},
 

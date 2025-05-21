@@ -55,3 +55,18 @@ func (h *SiteHandler) GetBySlug(c *gin.Context) {
 	// Retorna o site encontrado
 	c.JSON(http.StatusOK, site)
 }
+
+// GetSitesByUser retorna todos os sites de um usuário
+func (h *SiteHandler) GetSitesByUser(c *gin.Context) {
+	userId := c.Param("userId")
+	if userId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "userId é obrigatório"})
+		return
+	}
+	sites, err := h.siteService.GetSitesByUser(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, sites)
+}

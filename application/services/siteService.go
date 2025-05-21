@@ -167,3 +167,21 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 		Footer:         footerDTO,
 	}, nil
 }
+
+// GetSitesByUser busca todos os sites de um usuário pelo user_id
+func (s *SiteService) GetSitesByUser(userId string) ([]dtos.SiteResponseDTO, error) {
+	sites, err := s.siteRepository.FindByUserID(userId)
+	if err != nil {
+		return nil, err
+	}
+	var resp []dtos.SiteResponseDTO
+	for _, site := range sites {
+		resp = append(resp, dtos.SiteResponseDTO{
+			SiteID:   site.ID,
+			SiteName: site.Name,
+			SiteSlug: site.Slug,
+			UserID:   site.UserID,
+		})
+	}
+	return resp, nil
+}

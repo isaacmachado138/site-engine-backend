@@ -6,4 +6,5 @@ import "myapp/domain/entities"
 type SiteRepository interface {
 	Create(site *entities.Site) error
 	FindBySlug(slug string) (*entities.Site, error)
+	FindByUserID(userId string) ([]entities.Site, error)
 }

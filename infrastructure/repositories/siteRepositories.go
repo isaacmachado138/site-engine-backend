@@ -34,3 +34,9 @@ func (r *siteRepository) FindBySlug(slug string) (*entities.Site, error) {
 	}
 	return &site, nil
 }
+
+func (r *siteRepository) FindByUserID(userId string) ([]entities.Site, error) {
+	var sites []entities.Site
+	err := r.db.Where("user_id = ?", userId).Find(&sites).Error
+	return sites, err
+}
