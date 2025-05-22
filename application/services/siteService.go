@@ -177,10 +177,11 @@ func (s *SiteService) GetSitesByUser(userId string) ([]dtos.SiteResponseDTO, err
 	var resp []dtos.SiteResponseDTO
 	for _, site := range sites {
 		resp = append(resp, dtos.SiteResponseDTO{
-			SiteID:   site.ID,
-			SiteName: site.Name,
-			SiteSlug: site.Slug,
-			UserID:   site.UserID,
+			SiteID:         site.ID,
+			SiteName:       site.Name,
+			SiteSlug:       site.Slug,
+			SiteIconWindow: site.SiteIconWindow,
+			UserID:         site.UserID,
 		})
 	}
 	return resp, nil
