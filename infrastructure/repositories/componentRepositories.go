@@ -75,3 +75,12 @@ func (r *componentRepository) FindUniqueBySiteAndTypeCodeLike(siteID uint, typeC
 	}
 	return &component, nil
 }
+
+// FindByID busca um componente pelo ID
+func (r *componentRepository) FindByID(componentID uint) (*entities.Component, error) {
+	var component entities.Component
+	if err := r.db.Preload("Type").Where("component_id = ?", componentID).First(&component).Error; err != nil {
+		return nil, err
+	}
+	return &component, nil
+}

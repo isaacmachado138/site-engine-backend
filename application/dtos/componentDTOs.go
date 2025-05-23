@@ -9,8 +9,10 @@ type ComponentCreateDTO struct {
 
 // ComponentResponseDTO representa os dados retornados após a criação de um componente
 type ComponentResponseDTO struct {
-	ComponentID     uint   `json:"component_id"`
-	ComponentTypeId string `json:"component_type_id"`
-	ComponentName   string `json:"component_name"`
-	UserId          uint   `json:"user_id"`
+	ComponentID       uint                   `json:"component_id"`
+	ComponentTypeId   string                 `json:"component_type_id"`
+	ComponentTypeCode string                 `json:"component_type_code"`
+	ComponentName     string                 `json:"component_name"`
+	UserId            uint                   `json:"user_id"`
+	ComponentSettings map[string]interface{} `json:"component_settings"`
 }

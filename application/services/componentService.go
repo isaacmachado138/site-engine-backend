@@ -30,10 +30,23 @@ func (s *ComponentService) Create(componentDTO dtos.ComponentCreateDTO) (*dtos.C
 		return nil, err
 	}
 
+	// Buscar o componente com as informações do tipo
+	createdComponent, err := s.componentRepository.FindByID(component.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Obter o código do tipo de componente
+	typeCode := ""
+	if createdComponent.Type != nil {
+		typeCode = createdComponent.Type.Code
+	}
+
 	return &dtos.ComponentResponseDTO{
-		ComponentID:     component.ID,
-		ComponentTypeId: component.TypeId,
-		ComponentName:   component.Name,
-		UserId:          component.UserID, // Corrected field name to match DTO
+		ComponentID:       createdComponent.ID,
+		ComponentTypeId:   createdComponent.TypeId,
+		ComponentTypeCode: typeCode,
+		ComponentName:     createdComponent.Name,
+		UserId:            createdComponent.UserID,
 	}, nil
 }

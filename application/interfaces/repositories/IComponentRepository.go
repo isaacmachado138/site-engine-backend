@@ -8,4 +8,5 @@ type ComponentRepository interface {
 	FindByModuleID(moduleID uint) ([]entities.Component, error)
 	FindUniqueBySiteAndTypeCode(siteID uint, typeCode string) (*entities.Component, error)
 	FindUniqueBySiteAndTypeCodeLike(siteID uint, typeCodeLike string) (*entities.Component, error)
+	FindByID(componentID uint) (*entities.Component, error)
 }

@@ -91,13 +91,19 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 					ComponentItemLink:         item.ComponentItemLink,
 				})
 			}
-			componentSettings["items"] = itemsDTO
+			componentSettings["items"] = itemsDTO // Obter o código do tipo de componente
+			typeCode := ""
+			if c.Type != nil {
+				typeCode = c.Type.Code
+			}
+
 			componentResponseDTOs = append(componentResponseDTOs, dtos.ComponentResponseDTO{
-				ComponentID:     c.ID,
-				ComponentTypeId: c.TypeId,
-				ComponentName:   c.Name,
-				UserId:          c.UserID,
-				// Adicione outros campos se necessário
+				ComponentID:       c.ID,
+				ComponentTypeId:   c.TypeId,
+				ComponentTypeCode: typeCode,
+				ComponentName:     c.Name,
+				UserId:            c.UserID,
+				ComponentSettings: componentSettings,
 			})
 		}
 
