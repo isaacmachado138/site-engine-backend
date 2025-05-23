@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"myapp/application/dtos"
@@ -69,4 +70,26 @@ func (h *SiteHandler) GetSitesByUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, sites)
+}
+
+// Update lida com a atualização parcial de sites
+func (h *SiteHandler) Update(c *gin.Context) {
+	var updateDTO dtos.SiteUpdateDTO
+	if err := c.ShouldBindJSON(&updateDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
+		return
+	}
+	siteIDParam := c.Param("siteId")
+	var siteID uint
+	_, err := fmt.Sscanf(siteIDParam, "%d", &siteID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+	site, err := h.siteService.Update(siteID, updateDTO)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, site)
 }

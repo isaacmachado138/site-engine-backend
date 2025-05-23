@@ -65,3 +65,13 @@ type ComponentDTO struct {
 	ComponentSettings map[string]interface{} `json:"component_settings"`
 	// Items removido, pois agora vai dentro de settings
 }
+
+// SiteUpdateDTO representa os dados para atualização parcial de um site
+// Todos os campos são opcionais
+// Adicione a tag 'omitempty' para permitir update parcial
+type SiteUpdateDTO struct {
+	SiteName       *string `json:"site_name,omitempty"`
+	SiteSlug       *string `json:"site_slug,omitempty"`
+	UserID         *uint   `json:"user_id,omitempty"`
+	SiteIconWindow *string `json:"site_icon_window,omitempty"`
+}

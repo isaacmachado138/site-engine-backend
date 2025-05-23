@@ -40,3 +40,17 @@ func (r *siteRepository) FindByUserID(userId string) ([]entities.Site, error) {
 	err := r.db.Where("user_id = ?", userId).Find(&sites).Error
 	return sites, err
 }
+
+// FindByID busca um site pelo ID
+func (r *siteRepository) FindByID(siteID uint) (*entities.Site, error) {
+	var site entities.Site
+	if err := r.db.First(&site, siteID).Error; err != nil {
+		return nil, err
+	}
+	return &site, nil
+}
+
+// Update atualiza um site existente
+func (r *siteRepository) Update(site *entities.Site) error {
+	return r.db.Save(site).Error
+}

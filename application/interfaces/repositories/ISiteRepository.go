@@ -7,4 +7,6 @@ type SiteRepository interface {
 	Create(site *entities.Site) error
 	FindBySlug(slug string) (*entities.Site, error)
 	FindByUserID(userId string) ([]entities.Site, error)
+	FindByID(siteID uint) (*entities.Site, error)
+	Update(site *entities.Site) error
 }

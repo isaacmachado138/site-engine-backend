@@ -186,3 +186,36 @@ func (s *SiteService) GetSitesByUser(userId string) ([]dtos.SiteResponseDTO, err
 	}
 	return resp, nil
 }
+
+// Update atualiza um site existente (parcial)
+func (s *SiteService) Update(siteID uint, updateDTO dtos.SiteUpdateDTO) (*dtos.SiteResponseDTO, error) {
+	site, err := s.siteRepository.FindByID(siteID)
+	if err != nil {
+		return nil, err
+	}
+	if site == nil {
+		return nil, errors.New("site não encontrado")
+	}
+	if updateDTO.SiteName != nil {
+		site.Name = *updateDTO.SiteName
+	}
+	if updateDTO.SiteSlug != nil {
+		site.Slug = *updateDTO.SiteSlug
+	}
+	if updateDTO.UserID != nil {
+		site.UserID = *updateDTO.UserID
+	}
+	if updateDTO.SiteIconWindow != nil {
+		site.SiteIconWindow = *updateDTO.SiteIconWindow
+	}
+	if err := s.siteRepository.Update(site); err != nil {
+		return nil, err
+	}
+	return &dtos.SiteResponseDTO{
+		SiteID:         site.ID,
+		SiteName:       site.Name,
+		SiteSlug:       site.Slug,
+		UserID:         site.UserID,
+		SiteIconWindow: site.SiteIconWindow,
+	}, nil
+}
