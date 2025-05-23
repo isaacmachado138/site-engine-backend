@@ -42,8 +42,12 @@ func (h *SiteHandler) Create(c *gin.Context) {
 func (h *SiteHandler) GetBySlug(c *gin.Context) {
 	slug := c.Param("slug")
 
-	// Chama o serviço para buscar o site pelo slug
-	site, err := h.siteService.GetBySlug(slug)
+	onlyActive := 0
+	if v := c.Query("onlyActive"); v == "1" {
+		onlyActive = 1
+	}
+
+	site, err := h.siteService.GetBySlug(slug, onlyActive)
 	if err != nil {
 		if err.Error() == "site not found" {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Site não encontrado"})
@@ -53,7 +57,6 @@ func (h *SiteHandler) GetBySlug(c *gin.Context) {
 		return
 	}
 
-	// Retorna o site encontrado
 	c.JSON(http.StatusOK, site)
 }
 

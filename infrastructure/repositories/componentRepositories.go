@@ -24,11 +24,21 @@ func (r *componentRepository) Create(component *entities.Component) error {
 	return r.db.Create(component).Error
 }
 
-// FindByModuleID busca todos os componentes de um módulo via tabela module_component
+// FindByModuleID busca todos os componentes de um módulo via tabela module_component (compatibilidade)
 func (r *componentRepository) FindByModuleID(moduleID uint) ([]entities.Component, error) {
+	return r.FindByModuleIDWithActive(moduleID, false)
+}
+
+// FindByModuleIDWithActive busca todos os componentes de um módulo via tabela module_component
+// Se onlyActive for true, busca apenas module_component_active = true
+func (r *componentRepository) FindByModuleIDWithActive(moduleID uint, onlyActive bool) ([]entities.Component, error) {
 	// Buscar os relacionamentos module_component com o ID do módulo especificado
 	var moduleComponents []entities.ModuleComponent
-	if err := r.db.Where("module_id = ?", moduleID).Find(&moduleComponents).Error; err != nil {
+	query := r.db.Where("module_id = ?", moduleID)
+	if onlyActive {
+		query = query.Where("module_component_active = ?", true)
+	}
+	if err := query.Find(&moduleComponents).Error; err != nil {
 		return nil, err
 	}
 

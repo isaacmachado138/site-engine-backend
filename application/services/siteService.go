@@ -44,8 +44,12 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 	}, nil
 }
 
-// GetBySlug busca um site pelo slug, incluindo módulos e componentes
-func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) {
+// GetBySlug busca um site pelo slug, incluindo módulos e componentes. Se onlyActive=1, retorna apenas módulos/componentes ativos.
+func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullResponseDTO, error) {
+	activeOnly := 0
+	if len(onlyActive) > 0 {
+		activeOnly = onlyActive[0]
+	}
 
 	// Buscando o site pelo slug
 	site, err := s.siteRepository.FindBySlug(slug)
@@ -65,7 +69,15 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 	// Buscando os componentes associados a cada módulo
 	var modulesWithComponents []dtos.ModuleWithComponentsDTO
 	for _, module := range modules {
-		components, err := s.componentRepository.FindByModuleID(module.ID)
+		if activeOnly == 1 && module.ModuleActive != 1 {
+			continue
+		}
+		var components []entities.Component
+		if activeOnly == 1 {
+			components, err = s.componentRepository.FindByModuleIDWithActive(module.ID, true)
+		} else {
+			components, err = s.componentRepository.FindByModuleID(module.ID)
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +88,6 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 			for _, s := range c.Settings {
 				componentSettings[s.Key] = s.Value
 			}
-			// Adicionando o tipo de componente ao DTO
 			var itemsDTO []dtos.ComponentItemDTO
 			for _, item := range c.Items {
 				itemsDTO = append(itemsDTO, dtos.ComponentItemDTO{
@@ -91,12 +102,11 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 					ComponentItemLink:         item.ComponentItemLink,
 				})
 			}
-			componentSettings["items"] = itemsDTO // Obter o código do tipo de componente
+			componentSettings["items"] = itemsDTO
 			typeCode := ""
 			if c.Type != nil {
 				typeCode = c.Type.Code
 			}
-
 			componentResponseDTOs = append(componentResponseDTOs, dtos.ComponentResponseDTO{
 				ComponentID:       c.ID,
 				ComponentTypeId:   c.TypeId,
@@ -107,7 +117,6 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 			})
 		}
 
-		// Adicionando o módulo e seus componentes ao DTO
 		modulesWithComponents = append(modulesWithComponents, dtos.ModuleWithComponentsDTO{
 			ModuleID:          module.ID,
 			ModuleName:        module.Name,
