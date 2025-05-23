@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"myapp/application/dtos"
 	"myapp/application/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ModuleHandler lida com operações relacionadas a módulos
@@ -35,4 +37,26 @@ func (h *ModuleHandler) Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, module)
+}
+
+// Update lida com a atualização de módulos existentes
+func (h *ModuleHandler) Update(c *gin.Context) {
+	var updateDTO dtos.ModuleUpdateDTO
+	if err := c.ShouldBindJSON(&updateDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
+		return
+	}
+	moduleIDParam := c.Param("moduleId")
+	var moduleID uint
+	_, err := fmt.Sscanf(moduleIDParam, "%d", &moduleID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+	module, err := h.moduleService.Update(moduleID, updateDTO)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, module)
 }

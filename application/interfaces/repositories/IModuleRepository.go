@@ -6,4 +6,6 @@ import "myapp/domain/entities"
 type ModuleRepository interface {
 	Create(module *entities.Module) error
 	FindBySiteID(siteID uint) ([]entities.Module, error)
+	FindByID(moduleID uint) (*entities.Module, error)
+	Update(module *entities.Module) error
 }

@@ -29,10 +29,14 @@ type SiteFullResponseDTO struct {
 }
 
 type ModuleWithComponentsDTO struct {
-	ModuleID   uint           `json:"module_id"`
-	ModuleName string         `json:"module_name"`
-	ModuleSlug string         `json:"module_slug"`
-	Components []ComponentDTO `json:"components"`
+	ModuleID          uint                   `json:"module_id"`
+	ModuleName        string                 `json:"module_name"`
+	ModuleSlug        string                 `json:"module_slug"`
+	ModuleDescription string                 `json:"module_description"`
+	ModuleOrder       int                    `json:"module_order"`
+	SiteID            uint                   `json:"site_id"`
+	ModuleActive      int                    `json:"module_active"`
+	Components        []ComponentResponseDTO `json:"components"`
 }
 
 type ComponentSettingDTO struct {

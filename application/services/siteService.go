@@ -70,15 +70,11 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 			return nil, err
 		}
 
-		var componentDTOs []dtos.ComponentDTO
+		var componentResponseDTOs []dtos.ComponentResponseDTO
 		for _, c := range components {
 			componentSettings := make(map[string]interface{})
 			for _, s := range c.Settings {
 				componentSettings[s.Key] = s.Value
-			}
-			componentTypeCode := ""
-			if c.Type != nil {
-				componentTypeCode = c.Type.Code
 			}
 			// Adicionando o tipo de componente ao DTO
 			var itemsDTO []dtos.ComponentItemDTO
@@ -96,21 +92,25 @@ func (s *SiteService) GetBySlug(slug string) (*dtos.SiteFullResponseDTO, error) 
 				})
 			}
 			componentSettings["items"] = itemsDTO
-			componentDTOs = append(componentDTOs, dtos.ComponentDTO{
-				ComponentID:       c.ID,
-				ComponentTypeId:   c.TypeId,
-				ComponentTypeCode: componentTypeCode,
-				ComponentName:     c.Name,
-				ComponentSettings: componentSettings,
+			componentResponseDTOs = append(componentResponseDTOs, dtos.ComponentResponseDTO{
+				ComponentID:     c.ID,
+				ComponentTypeId: c.TypeId,
+				ComponentName:   c.Name,
+				UserId:          c.UserID,
+				// Adicione outros campos se necessário
 			})
 		}
 
 		// Adicionando o módulo e seus componentes ao DTO
 		modulesWithComponents = append(modulesWithComponents, dtos.ModuleWithComponentsDTO{
-			ModuleID:   module.ID,
-			ModuleName: module.Name,
-			ModuleSlug: "/" + module.Slug,
-			Components: componentDTOs,
+			ModuleID:          module.ID,
+			ModuleName:        module.Name,
+			ModuleSlug:        "/" + module.Slug,
+			ModuleDescription: module.Description,
+			ModuleOrder:       module.Order,
+			SiteID:            module.SiteID,
+			ModuleActive:      module.ModuleActive, // Propaga o campo para o DTO
+			Components:        componentResponseDTOs,
 		})
 	}
 

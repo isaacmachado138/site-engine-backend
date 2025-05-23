@@ -40,6 +40,7 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 
 		// Rotas de módulos
 		api.POST("/site/module", moduleHandler.Create)
+		api.PUT("/site/module/:moduleId", moduleHandler.Update)
 
 		// Rotas de componentes
 		api.POST("/site/component", componentHandler.Create)

@@ -31,3 +31,17 @@ func (r *moduleRepository) FindBySiteID(siteID uint) ([]entities.Module, error) 
 	}
 	return modules, nil
 }
+
+// FindByID busca um módulo pelo ID
+func (r *moduleRepository) FindByID(moduleID uint) (*entities.Module, error) {
+	var module entities.Module
+	if err := r.db.First(&module, moduleID).Error; err != nil {
+		return nil, err
+	}
+	return &module, nil
+}
+
+// Update atualiza um módulo existente no banco de dados
+func (r *moduleRepository) Update(module *entities.Module) error {
+	return r.db.Save(module).Error
+}
