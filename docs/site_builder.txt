@@ -1,0 +1,566 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Tempo de geração: 24/05/2025 às 03:21
+-- Versão do servidor: 8.0.31
+-- Versão do PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Banco de dados: `site_builder`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `component`
+--
+
+CREATE TABLE `component` (
+  `component_id` int NOT NULL,
+  `component_type_id` int NOT NULL,
+  `component_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int NOT NULL,
+  `site_id` int DEFAULT NULL,
+  `component_ins_id` int DEFAULT NULL,
+  `component_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `component_upd_id` int DEFAULT NULL,
+  `component_upd_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `component`
+--
+
+INSERT INTO `component` (`component_id`, `component_type_id`, `component_name`, `user_id`, `site_id`, `component_ins_id`, `component_ins_date`, `component_upd_id`, `component_upd_date`) VALUES
+(70000, 9001, 'Banner Principal', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70001, 9002, 'Sobre', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70002, 9003, 'Seção de Texto - Sobre', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70003, 9004, 'Botão WhatsApp', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70004, 9005, 'Serviços Oferecidos', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70005, 9006, 'Listagem de Depoimentos', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70006, 9007, 'Seção com Informações de Contato', 1, 10000, 1, '2025-05-13 15:57:19', 1, '2025-05-14 15:40:16'),
+(70007, 9008, 'Navbar', 1, 10000, NULL, '2025-05-14 15:40:40', NULL, '2025-05-14 15:40:40'),
+(70008, 9009, 'Footer', 1, 10000, NULL, '2025-05-14 15:40:40', NULL, '2025-05-14 15:40:40'),
+(70009, 9005, 'Serviços Oferecidos', 1, 0, NULL, '2025-05-20 15:12:16', NULL, '2025-05-20 15:18:03'),
+(70010, 9003, 'Seção de Texto - Gestação', 1, 0, NULL, '2025-05-20 15:24:52', NULL, '2025-05-20 15:24:52'),
+(70011, 9003, 'Seção de Texto - Pós-parto', 1, 0, NULL, '2025-05-20 15:25:05', NULL, '2025-05-20 15:25:05'),
+(70012, 9003, 'Seção de Texto - Volta ao Trabalho', 1, 0, NULL, '2025-05-20 15:25:21', NULL, '2025-05-20 15:25:21');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `component_item`
+--
+
+CREATE TABLE `component_item` (
+  `component_item_id` int NOT NULL,
+  `component_id` int NOT NULL,
+  `component_item_title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `component_item_subtitle` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `component_item_subtitle_type` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `component_item_text` text COLLATE utf8mb4_unicode_ci,
+  `component_item_image` text COLLATE utf8mb4_unicode_ci,
+  `component_item_link` text COLLATE utf8mb4_unicode_ci,
+  `component_item_order` int DEFAULT '0',
+  `component_item_ins_id` int DEFAULT NULL,
+  `component_item_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `component_item_upd_id` int DEFAULT NULL,
+  `component_item_upd_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `component_item`
+--
+
+INSERT INTO `component_item` (`component_item_id`, `component_id`, `component_item_title`, `component_item_subtitle`, `component_item_subtitle_type`, `component_item_text`, `component_item_image`, `component_item_link`, `component_item_order`, `component_item_ins_id`, `component_item_ins_date`, `component_item_upd_id`, `component_item_upd_date`) VALUES
+(2000003, 70004, 'Gestação', '', '', 'Orientações práticas e técnicas para a preparação da amamentação ainda durante a gestação, com foco no vínculo e prevenção de dificuldades.', 'https://i.imgur.com/DElWAm0.png', NULL, 1, NULL, '2025-05-19 17:07:48', NULL, '2025-05-19 17:07:48'),
+(2000004, 70004, 'Pós-parto', '', '', 'Apoio essencial nos primeiros dias de vida do bebê, auxiliando na pega, posição e no manejo das principais dificuldades iniciais.', 'https://i.imgur.com/RF5Lofo.png', NULL, 2, NULL, '2025-05-19 17:07:48', NULL, '2025-05-19 17:07:48'),
+(2000005, 70004, 'Volta ao Trabalho', '', '', 'Planejamento e suporte para a manutenção da amamentação com a volta à rotina profissional, incluindo ordenha e armazenamento do leite materno.', 'https://i.imgur.com/XJ4Umej.png', NULL, 3, NULL, '2025-05-19 17:07:48', NULL, '2025-05-19 17:07:48'),
+(2000019, 70009, 'Gestação', '', '', '', 'https://i.imgur.com/DElWAm0.png', '#gestacao', 1, NULL, '2025-05-20 15:17:07', NULL, '2025-05-20 15:33:58'),
+(2000020, 70009, 'Pós-parto', '', '', '', 'https://i.imgur.com/RF5Lofo.png', '#pos-parto', 2, NULL, '2025-05-20 15:17:07', NULL, '2025-05-20 15:34:11'),
+(2000021, 70009, 'Volta ao Trabalho', '', '', '', 'https://i.imgur.com/XJ4Umej.png', '#volta-trabalho', 3, NULL, '2025-05-20 15:17:07', NULL, '2025-05-20 15:34:16'),
+(2000022, 70005, 'Juliana', 'São José do Rio Pardo - SP', '', 'Gostaria de compartilhar o quanto fiquei satisfeita e grata com o seu trabalho. Estava prestes a desistir de amamentar. Já havia passado com outras 2 consultoras, 4 mastites, hiperlactação. Quando vi uma caixa de perguntas no Instagram você falando sobre hiperlactação e entrei em contato. Você foi super acolhedora. Tinha muito conhecimento para passar. Me ensinou a fazer a massagem correta para não empedrar, indicou chá para tomar para diminuir um pouco a produção. Sempre perguntando se estava tudo bem. E assim continuamos na amamentação sem sofrimento. Obrigada por não ter deixado eu desistir.', '', '', 1, NULL, '2025-05-20 15:19:03', NULL, '2025-05-20 15:19:03'),
+(2000023, 70005, 'Patrícia Muniz', 'Caconde - SP', '', 'Vivi salvou minha amamentação... se não fosse ela já tinha desistido logo nos primeiros dias. Muito atenciosa, prestativa, empática. Ensina várias técnicas pra se tornar mais \'fácil\'. Indico de olhos fechados!!', '', '', 2, NULL, '2025-05-20 15:19:03', NULL, '2025-05-20 15:19:03'),
+(2000024, 70005, 'Laura Camelo', 'São Paulo - SP', '', 'Consultora com grande conhecimento e ótimas técnicas, além de ser muito amável e empática. Me ajudou desde a gestação com excelentes resultados!!', '', '', 3, NULL, '2025-05-20 15:19:03', NULL, '2025-05-20 15:19:03'),
+(2000025, 70005, 'Beatriz Fante', 'Caconde - SP', '', 'Ótima e competente consultora!! Me ajudou e incentivou para que o processo de amamentação fosse mais leve!! Só gratidão ❤️ Indico muito para quem tem dúvidas e/ou dificuldades com a amamentação.', '', '', 4, NULL, '2025-05-20 15:19:03', NULL, '2025-05-20 15:19:03'),
+(2000026, 70005, 'Rachel Antonini', 'São Paulo - SP', '', 'Já me salvou várias vezes! É uma profissional maravilhosa, super carinhosa, e esse momento da amamentação é mais complicado do que imaginamos. E ela sabe como orientar e no final dá tudo certo. Com muita paciência, compromisso e amor. Obrigada pelo carinho.', '', '', 5, NULL, '2025-05-20 15:19:03', NULL, '2025-05-20 15:19:03');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `component_setting`
+--
+
+CREATE TABLE `component_setting` (
+  `component_setting_id` int NOT NULL,
+  `component_id` int NOT NULL,
+  `component_setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `component_setting_value` text COLLATE utf8mb4_unicode_ci,
+  `component_setting_ins_id` int DEFAULT NULL,
+  `component_setting_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `component_setting_upd_id` int DEFAULT NULL,
+  `component_setting_upd_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `component_setting`
+--
+
+INSERT INTO `component_setting` (`component_setting_id`, `component_id`, `component_setting_key`, `component_setting_value`, `component_setting_ins_id`, `component_setting_ins_date`, `component_setting_upd_id`, `component_setting_upd_date`) VALUES
+(100000, 70000, 'textColor', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100001, 70000, 'imageSrc', 'https://i.imgur.com/Q9ejpzE.jpeg', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100002, 70000, 'title', 'CONSULTORIA EM AMAMENTAÇÃO', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100003, 70000, 'subtitle', 'Apoio e orientação especializada para vivenciar a amamentação com confiança e amor.', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100004, 70001, 'title', 'QUEM SOU EU', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100005, 70001, 'subtitle', 'Viviani Machado', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100006, 70001, 'description', 'Enfermeira | Consultora de Amamentação', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100007, 70001, 'profileImage', 'https://i.imgur.com/NfoVtEJ.jpeg', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100008, 70001, 'showButton', 'true', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100009, 70001, 'buttonBackgroundColor', '#d1555b', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100010, 70001, 'buttonText', 'Saiba Mais', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100011, 70001, 'textColor', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100012, 70001, 'buttonDestination', '/sobre', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100013, 70001, 'text', 'Sou Viviani Machado, enfermeira com mais de 17 anos de experiência na área da saúde, mãe e Consultora de Amamentação. </p><p>A chegada da minha filha e minha vivência profissional me mostraram o quanto a informação e o suporte são essenciais na amamentação. Por isso, me especializei para oferecer um atendimento humanizado e baseado em evidências, ajudando outras mães a amamentarem com mais confiança, segurança e leveza.', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100014, 70002, 'title', 'Como funciona o atendimento', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100015, 70002, 'text', 'Minha consultoria, nesse momento, é realizada de forma online e foi pensada para te acompanhar em diferentes fases da jornada da amamentação, ajudando a evitar dificuldades e a encontrar soluções para desafios que possam surgir.', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100016, 70002, 'textColor', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100017, 70003, 'isWhatsapp', 'true', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100018, 70003, 'whatsappNumber', '19981471592', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100019, 70003, 'backgroundColor', '#d1555b', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100020, 70003, 'text', 'Fale Conosco', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100021, 70003, 'textColor', '#ffffff', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100022, 70004, 'title', 'Áreas de Atuação', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100023, 70004, 'subtitle', 'Suporte completo e humanizado em todas as fases da amamentação com olhar técnico e acolhedor.', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100024, 70004, 'textColor', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100025, 70004, 'backgroundColor', '#f8f9fa', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100027, 70005, 'title', 'Depoimentos', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100028, 70005, 'subtitle', 'O que dizem sobre a consultoria', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100029, 70005, 'textColor', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100030, 70005, 'backgroundColor', '#ffffff', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100031, 70005, 'itemColorPrimary', '#d1555b', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100032, 70005, 'itemColorSecondary', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100033, 70005, 'textColorItems', '#ffffff', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100035, 70006, 'title', 'Viviani Machado', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100036, 70006, 'subtitle', 'CONSULTORIA EM AMAMENTAÇÃO', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100037, 70006, 'location', 'Atendimento em todo o Brasil', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100038, 70006, 'textColor', '#056676', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100039, 70006, 'profileImage', 'https://i.imgur.com/pOqTjOy.jpeg', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100040, 70006, 'whatsappNumber', '19981471592', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100041, 70006, 'instagram', 'https://instagram.com/vivianimachado.consultoria', 1, '2025-05-13 15:58:33', 1, '2025-05-13 16:10:30'),
+(100042, 70007, 'backgroundColor', '#fff', NULL, '2025-05-15 10:17:01', NULL, '2025-05-15 10:17:01'),
+(100043, 70007, 'textColor', '#056676', NULL, '2025-05-15 10:17:01', NULL, '2025-05-15 10:17:01'),
+(100044, 70007, 'logo', 'https://i.imgur.com/ae3nIeJ.png', NULL, '2025-05-15 10:17:01', NULL, '2025-05-15 10:17:01'),
+(100045, 70008, 'type', 'FooterFull', NULL, '2025-05-15 10:23:14', NULL, '2025-05-15 10:23:14'),
+(100046, 70008, 'backgroundColor', '#056676', NULL, '2025-05-15 10:23:14', NULL, '2025-05-15 10:23:14'),
+(100047, 70008, 'textColor', '#fff', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100048, 70008, 'logo', 'https://i.imgur.com/hjH4Lkn.png', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100049, 70008, 'title', 'Viviani Machado © 2025', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100050, 70008, 'subtitle', 'Consultoria em Amamentação', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100051, 70008, 'location', 'Atendimento em todo o Brasil', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100052, 70008, 'showCopyright', 'true', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100053, 70008, 'copyright', 'Desenvolvido por Isaac Machado', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100054, 70008, 'buttonBackgroundColor', '#d1555b', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100055, 70008, 'whatsappNumber', '19981471592', NULL, '2025-05-15 10:23:44', NULL, '2025-05-15 10:23:44'),
+(100056, 70009, 'textColor', '#056676', NULL, '2025-05-20 15:14:22', NULL, '2025-05-20 15:14:22'),
+(100057, 70009, 'title', 'Áreas de Atuação', NULL, '2025-05-20 15:14:22', NULL, '2025-05-20 15:14:22'),
+(100058, 70009, 'subtitle', 'Suporte completo e humanizado em todas as fases da amamentação com olhar técnico e acolhedor.', NULL, '2025-05-20 15:14:22', NULL, '2025-05-20 15:14:22'),
+(100059, 70010, 'title', 'Pré-Natal', NULL, '2025-05-20 15:27:23', NULL, '2025-05-20 15:27:23'),
+(100060, 70010, 'reference', 'gestacao', NULL, '2025-05-20 15:27:23', NULL, '2025-05-20 15:27:23'),
+(100061, 70010, 'text', '<p>Ideal para gestantes que querem se preparar com segurança, esclarecer dúvidas e entender como funciona a amamentação nos primeiros dias. Abordamos temas como:</p><ul><li>Pega e posicionamento;</li><li>Comportamento do bebê;</li><li>Enxoval pró-amamentação;</li><li>Intercorrências comuns e emergências;</li><li>Estratégias e plano de amamentação</li></ul>', NULL, '2025-05-20 15:27:23', NULL, '2025-05-20 15:27:23'),
+(100062, 70010, 'textColor', '#056676', NULL, '2025-05-20 15:27:23', NULL, '2025-05-20 15:27:23'),
+(100063, 70011, 'title', 'Pós-parto', NULL, '2025-05-20 15:27:57', NULL, '2025-05-20 15:27:57'),
+(100064, 70011, 'reference', 'pos-parto', NULL, '2025-05-20 15:27:57', NULL, '2025-05-20 15:27:57'),
+(100065, 70011, 'text', '<p>Suporte essencial nas primeiras semanas para garantir que a amamentação aconteça de forma eficaz e sem dor. Inclui: </p><ul><li>Prevenção e tratamento de lesões</li><li>Manejo da produção de leite</li><li>Estratégias para evitar o desmame precoce</li><li>Solução para dificuldades como mastite</li><li>Solução para dificuldades como ingurgitamento</li><li>Solução para dificuldades como obstrução mamária</li><li>Solução para dificuldades como baixo ganho de peso do bebê</li></ul>', NULL, '2025-05-20 15:27:57', NULL, '2025-05-20 15:27:57'),
+(100066, 70011, 'textColor', '#056676', NULL, '2025-05-20 15:27:57', NULL, '2025-05-20 15:27:57'),
+(100067, 70012, 'title', 'Volta ao Trabalho', NULL, '2025-05-20 15:28:23', NULL, '2025-05-20 15:28:23'),
+(100068, 70012, 'reference', 'volta-trabalho', NULL, '2025-05-20 15:28:23', NULL, '2025-05-20 15:28:23'),
+(100069, 70012, 'text', '<p>Se você deseja continuar amamentando após retornar à rotina profissional, te ajudo a criar um plano eficiente de ordenha, armazenamento e adaptação para que seu bebê continue recebendo seu leite da melhor forma possível.</p>', NULL, '2025-05-20 15:28:23', NULL, '2025-05-20 15:28:23'),
+(100070, 70012, 'textColor', '#056676', NULL, '2025-05-20 15:28:23', NULL, '2025-05-20 15:28:23');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `component_type`
+--
+
+CREATE TABLE `component_type` (
+  `component_type_id` int NOT NULL,
+  `component_type_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `component_type_description` text COLLATE utf8mb4_unicode_ci,
+  `component_type_unique_in_site` tinyint(1) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `component_type`
+--
+
+INSERT INTO `component_type` (`component_type_id`, `component_type_code`, `component_type_description`, `component_type_unique_in_site`) VALUES
+(9001, 'BannerTop', NULL, 0),
+(9002, 'SectionSobreHeader', NULL, 0),
+(9003, 'SectionText', NULL, 0),
+(9004, 'Button', NULL, 0),
+(9005, 'SectionItemsDescription', NULL, 0),
+(9006, 'ListOfComents', NULL, 0),
+(9007, 'SectionContato', NULL, 0),
+(9008, 'NavbarHorizontal', NULL, 1),
+(9009, 'FooterFull', NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `component_type_setting`
+--
+
+CREATE TABLE `component_type_setting` (
+  `component_type_id` int NOT NULL,
+  `component_setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `component_type_setting`
+--
+
+INSERT INTO `component_type_setting` (`component_type_id`, `component_setting_key`) VALUES
+(9001, 'imageSrc'),
+(9001, 'subtitle'),
+(9001, 'textColor'),
+(9001, 'title'),
+(9002, 'buttonBackgroundColor'),
+(9002, 'buttonDestination'),
+(9002, 'buttonText'),
+(9002, 'description'),
+(9002, 'profileImage'),
+(9002, 'showButton'),
+(9002, 'subtitle'),
+(9002, 'text'),
+(9002, 'textColor'),
+(9002, 'title'),
+(9003, 'reference'),
+(9003, 'text'),
+(9003, 'textColor'),
+(9003, 'title'),
+(9004, 'backgroundColor'),
+(9004, 'isWhatsapp'),
+(9004, 'text'),
+(9004, 'textColor'),
+(9004, 'whatsappNumber'),
+(9005, 'backgroundColor'),
+(9005, 'subtitle'),
+(9005, 'textColor'),
+(9005, 'title'),
+(9006, 'backgroundColor'),
+(9006, 'itemColorPrimary'),
+(9006, 'itemColorSecondary'),
+(9006, 'subtitle'),
+(9006, 'textColor'),
+(9006, 'textColorItems'),
+(9006, 'title'),
+(9007, 'instagram'),
+(9007, 'location'),
+(9007, 'profileImage'),
+(9007, 'subtitle'),
+(9007, 'textColor'),
+(9007, 'title'),
+(9007, 'whatsappNumber'),
+(9008, 'backgroundColor'),
+(9008, 'logo'),
+(9008, 'textColor'),
+(9009, 'backgroundColor'),
+(9009, 'buttonBackgroundColor'),
+(9009, 'copyright'),
+(9009, 'location'),
+(9009, 'logo'),
+(9009, 'showCopyright'),
+(9009, 'subtitle'),
+(9009, 'textColor'),
+(9009, 'title'),
+(9009, 'type'),
+(9009, 'whatsappNumber');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `image`
+--
+
+CREATE TABLE `image` (
+  `image_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image_alt` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_title` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `image`
+--
+
+INSERT INTO `image` (`image_id`, `user_id`, `image_url`, `image_alt`, `image_title`) VALUES
+(1000000, 1, 'https://i.imgur.com/ae3nIeJ.png', 'Logo Viviani Machado', 'Logo'),
+(1000001, 1, 'https://i.imgur.com/hjH4Lkn.png', 'Logo Footer', 'Logo Footer'),
+(1000002, 1, 'https://i.imgur.com/YXc0Vgu.jpeg', 'Banner Principal', 'Banner Consultoria'),
+(1000003, 1, 'https://i.imgur.com/IHJaxAk.png', 'Foto Viviani Machado', 'Foto Perfil'),
+(1000004, 1, 'https://i.imgur.com/DElWAm0.png', 'Ícone Gestação', 'Ícone'),
+(1000005, 1, 'https://i.imgur.com/RF5Lofo.png', 'Ícone Pós-parto', 'Ícone'),
+(1000006, 1, 'https://i.imgur.com/XJ4Umej.png', 'Ícone Volta ao Trabalho', 'Ícone');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `module`
+--
+
+CREATE TABLE `module` (
+  `module_id` int NOT NULL,
+  `site_id` int NOT NULL,
+  `module_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `module_slug` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `module_active` tinyint(1) DEFAULT '0',
+  `module_description` text COLLATE utf8mb4_unicode_ci,
+  `module_order` int DEFAULT '0',
+  `module_ins_id` int DEFAULT NULL,
+  `module_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `module_upd_id` int DEFAULT NULL,
+  `module_upd_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `module`
+--
+
+INSERT INTO `module` (`module_id`, `site_id`, `module_name`, `module_slug`, `module_active`, `module_description`, `module_order`, `module_ins_id`, `module_ins_date`, `module_upd_id`, `module_upd_date`) VALUES
+(30000, 10000, 'Home', '', 1, NULL, 1, 1, '2025-05-13 15:57:19', 1, '2025-05-22 22:46:25'),
+(30001, 10000, 'Sobre', 'sobre', 1, '', 2, 1, '2025-05-13 15:57:19', 1, '2025-05-23 12:46:19'),
+(30002, 10000, 'Serviços Oferecidos', 'servicos', 1, NULL, 3, 1, '2025-05-13 15:57:19', 1, '2025-05-22 22:46:25'),
+(30003, 10000, 'Depoimentos', 'depoimentos', 1, NULL, 4, 1, '2025-05-13 15:57:19', 1, '2025-05-22 22:46:25'),
+(30004, 10000, 'Contato', 'contato', 1, '', 5, 1, '2025-05-13 15:57:19', 1, '2025-05-22 23:29:47');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `module_component`
+--
+
+CREATE TABLE `module_component` (
+  `module_component_id` int NOT NULL,
+  `module_id` int NOT NULL,
+  `component_id` int NOT NULL,
+  `module_component_order` int DEFAULT '0',
+  `module_component_active` tinyint(1) DEFAULT '1',
+  `module_component_ins_id` int DEFAULT NULL,
+  `module_component_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `module_component_upd_id` int DEFAULT NULL,
+  `module_component_upd_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `module_component`
+--
+
+INSERT INTO `module_component` (`module_component_id`, `module_id`, `component_id`, `module_component_order`, `module_component_active`, `module_component_ins_id`, `module_component_ins_date`, `module_component_upd_id`, `module_component_upd_date`) VALUES
+(200000, 30000, 70000, 1, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200001, 30000, 70001, 2, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200002, 30000, 70004, 3, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200003, 30001, 70001, 1, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200004, 30001, 70002, 2, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200005, 30002, 70009, 1, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-20 15:12:58'),
+(200006, 30003, 70005, 1, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200007, 30004, 70006, 1, 1, 1, '2025-05-13 15:58:42', 1, '2025-05-13 16:10:30'),
+(200008, 30002, 70010, 1, 1, NULL, '2025-05-20 15:31:04', NULL, '2025-05-20 15:31:04'),
+(200009, 30002, 70011, 2, 1, NULL, '2025-05-20 15:31:04', NULL, '2025-05-20 15:31:04'),
+(200010, 30002, 70012, 3, 1, NULL, '2025-05-20 15:31:04', NULL, '2025-05-20 15:31:04');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `site`
+--
+
+CREATE TABLE `site` (
+  `site_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `site_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `site_slug` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `site_icon_window` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `site_ins_id` int DEFAULT NULL,
+  `site_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `site_upd_id` int DEFAULT NULL,
+  `site_upd_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `site`
+--
+
+INSERT INTO `site` (`site_id`, `user_id`, `site_name`, `site_slug`, `site_icon_window`, `site_ins_id`, `site_ins_date`, `site_upd_id`, `site_upd_date`) VALUES
+(10000, 1, 'Viviani Machado', 'vivianimachado', 'https://i.imgur.com/EzwMD7K.png', 1, '2025-05-13 15:48:38', 1, '2025-05-16 16:19:39'),
+(10001, 1, 'My Awesome Site', 'my-awesome-site', NULL, NULL, '2025-05-15 17:28:15', NULL, '2025-05-15 17:28:15');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `user`
+--
+
+CREATE TABLE `user` (
+  `user_id` int NOT NULL,
+  `user_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_admin` tinyint(1) DEFAULT '0',
+  `user_del` tinyint(1) DEFAULT '0',
+  `user_ins_id` int DEFAULT NULL,
+  `user_ins_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `user_upd_id` int DEFAULT NULL,
+  `user_upd_date` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `user`
+--
+
+INSERT INTO `user` (`user_id`, `user_name`, `user_email`, `user_password`, `user_admin`, `user_del`, `user_ins_id`, `user_ins_date`, `user_upd_id`, `user_upd_date`) VALUES
+(1, 'Isaac Machado', 'isaacmachado138@gmail.com', '$2b$12$LOHaw9rz.TXijGfA8TRMSODR1CbgDEhwPG48UEDkN2.AWZeSRhuIi', 1, 0, 1, '2025-05-13 15:48:38', 1, '2025-05-15 17:22:22');
+
+--
+-- Índices para tabelas despejadas
+--
+
+--
+-- Índices de tabela `component`
+--
+ALTER TABLE `component`
+  ADD PRIMARY KEY (`component_id`);
+
+--
+-- Índices de tabela `component_item`
+--
+ALTER TABLE `component_item`
+  ADD PRIMARY KEY (`component_item_id`);
+
+--
+-- Índices de tabela `component_setting`
+--
+ALTER TABLE `component_setting`
+  ADD PRIMARY KEY (`component_setting_id`);
+
+--
+-- Índices de tabela `component_type`
+--
+ALTER TABLE `component_type`
+  ADD PRIMARY KEY (`component_type_id`),
+  ADD UNIQUE KEY `component_type_code` (`component_type_code`);
+
+--
+-- Índices de tabela `component_type_setting`
+--
+ALTER TABLE `component_type_setting`
+  ADD PRIMARY KEY (`component_type_id`,`component_setting_key`);
+
+--
+-- Índices de tabela `image`
+--
+ALTER TABLE `image`
+  ADD PRIMARY KEY (`image_id`);
+
+--
+-- Índices de tabela `module`
+--
+ALTER TABLE `module`
+  ADD PRIMARY KEY (`module_id`),
+  ADD UNIQUE KEY `module_slug` (`module_slug`);
+
+--
+-- Índices de tabela `module_component`
+--
+ALTER TABLE `module_component`
+  ADD PRIMARY KEY (`module_component_id`);
+
+--
+-- Índices de tabela `site`
+--
+ALTER TABLE `site`
+  ADD PRIMARY KEY (`site_id`),
+  ADD UNIQUE KEY `site_slug` (`site_slug`);
+
+--
+-- Índices de tabela `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `user_email` (`user_email`);
+
+--
+-- AUTO_INCREMENT para tabelas despejadas
+--
+
+--
+-- AUTO_INCREMENT de tabela `component`
+--
+ALTER TABLE `component`
+  MODIFY `component_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70013;
+
+--
+-- AUTO_INCREMENT de tabela `component_item`
+--
+ALTER TABLE `component_item`
+  MODIFY `component_item_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2000027;
+
+--
+-- AUTO_INCREMENT de tabela `component_setting`
+--
+ALTER TABLE `component_setting`
+  MODIFY `component_setting_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100071;
+
+--
+-- AUTO_INCREMENT de tabela `component_type`
+--
+ALTER TABLE `component_type`
+  MODIFY `component_type_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9010;
+
+--
+-- AUTO_INCREMENT de tabela `image`
+--
+ALTER TABLE `image`
+  MODIFY `image_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000007;
+
+--
+-- AUTO_INCREMENT de tabela `module`
+--
+ALTER TABLE `module`
+  MODIFY `module_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30005;
+
+--
+-- AUTO_INCREMENT de tabela `module_component`
+--
+ALTER TABLE `module_component`
+  MODIFY `module_component_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200011;
+
+--
+-- AUTO_INCREMENT de tabela `site`
+--
+ALTER TABLE `site`
+  MODIFY `site_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10002;
+
+--
+-- AUTO_INCREMENT de tabela `user`
+--
+ALTER TABLE `user`
+  MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
