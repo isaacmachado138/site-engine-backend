@@ -26,6 +26,7 @@ func SetupDependencies(db *gorm.DB, cfg *Config) *AppDependencies {
 	componentRepo := repositories.NewComponentRepository(db)
 	componentSettingRepo := repositories.NewComponentSettingRepository(db)
 	componentItemRepo := repositories.NewComponentItemRepository(db)
+	//componentTypeSettingRepo := repositories.NewComponentTypeSettingRepository(db)
 
 	userService := services.NewUserService(userRepo)
 	jwtMiddleware, _ := middlewares.SetupJWTMiddleware(userService, cfg.JWTSecret)
