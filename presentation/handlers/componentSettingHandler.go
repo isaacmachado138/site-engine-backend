@@ -58,3 +58,21 @@ func (h *ComponentSettingHandler) UpsertMany(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Settings salvos com sucesso"})
 }
+
+// GET /api/site/component/:componentId/setting
+func (h *ComponentSettingHandler) FindByComponentID(c *gin.Context) {
+	componentIDStr := c.Param("componentId")
+	componentID, err := strconv.ParseUint(componentIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "componentId inválido"})
+		return
+	}
+
+	settings, err := h.service.GetByComponentID(uint(componentID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar settings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, settings)
+}

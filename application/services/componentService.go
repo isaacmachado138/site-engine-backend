@@ -82,3 +82,39 @@ func (s *ComponentService) Create(componentDTO dtos.ComponentCreateDTO) (*dtos.C
 		UserId:            createdComponent.UserID,
 	}, nil
 }
+
+// GetByID busca um componente pelo ID
+func (s *ComponentService) GetByID(id uint) (*dtos.ComponentResponseDTO, error) {
+	// Buscar o componente com todas as suas relações
+	component, err := s.componentRepository.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Buscar settings do componente
+	settings, err := s.componentSettingRepo.FindByComponentID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Converter settings para map
+	componentSettings := make(map[string]interface{})
+	for _, setting := range settings {
+		componentSettings[setting.Key] = setting.Value
+	}
+
+	// Obter o código do tipo de componente
+	typeCode := ""
+	if component.Type != nil {
+		typeCode = component.Type.Code
+	}
+
+	return &dtos.ComponentResponseDTO{
+		ComponentID:       component.ID,
+		ComponentTypeId:   component.TypeId,
+		ComponentTypeCode: typeCode,
+		ComponentName:     component.Name,
+		UserId:            component.UserID,
+		ComponentSettings: componentSettings,
+	}, nil
+}
