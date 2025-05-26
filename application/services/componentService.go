@@ -8,13 +8,21 @@ import (
 
 // ComponentService lida com operações relacionadas a componentes
 type ComponentService struct {
-	componentRepository repositories.ComponentRepository
+	componentRepository      repositories.ComponentRepository
+	componentTypeSettingRepo repositories.ComponentTypeSettingRepository
+	componentSettingRepo     repositories.ComponentSettingRepository
 }
 
 // NewComponentService cria uma nova instância de ComponentService
-func NewComponentService(componentRepository repositories.ComponentRepository) *ComponentService {
+func NewComponentService(
+	componentRepository repositories.ComponentRepository,
+	componentTypeSettingRepo repositories.ComponentTypeSettingRepository,
+	componentSettingRepo repositories.ComponentSettingRepository,
+) *ComponentService {
 	return &ComponentService{
-		componentRepository: componentRepository,
+		componentRepository:      componentRepository,
+		componentTypeSettingRepo: componentTypeSettingRepo,
+		componentSettingRepo:     componentSettingRepo,
 	}
 }
 
@@ -38,8 +46,32 @@ func (s *ComponentService) Create(componentDTO dtos.ComponentCreateDTO) (*dtos.C
 
 	// Obter o código do tipo de componente
 	typeCode := ""
+	var typeIdUint uint
 	if createdComponent.Type != nil {
 		typeCode = createdComponent.Type.Code
+		typeIdUint = createdComponent.Type.ID
+	}
+
+	// Buscar as setting_keys disponíveis para esse tipo de componente
+	settings, err := s.componentTypeSettingRepo.FindByComponentTypeID(typeIdUint)
+	if err != nil {
+		return nil, err
+	}
+
+	// Criar settings vazios para o novo componente
+	var settingsToInsert []entities.ComponentSetting
+	for _, sKey := range settings {
+		settingsToInsert = append(settingsToInsert, entities.ComponentSetting{
+			ComponentID: createdComponent.ID,
+			Key:         sKey.SettingKey,
+			Value:       "",
+		})
+	}
+	if len(settingsToInsert) > 0 {
+		err = s.componentSettingRepo.CreateMany(createdComponent.ID, settingsToInsert)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &dtos.ComponentResponseDTO{
