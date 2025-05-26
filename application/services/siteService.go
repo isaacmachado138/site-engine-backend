@@ -5,6 +5,7 @@ import (
 	"myapp/application/dtos"
 	"myapp/application/interfaces/repositories"
 	"myapp/domain/entities"
+	"strings"
 )
 
 // SiteService lida com operações relacionadas a sites
@@ -81,12 +82,14 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 		if err != nil {
 			return nil, err
 		}
-
 		var componentResponseDTOs []dtos.ComponentResponseDTO
 		for _, c := range components {
 			componentSettings := make(map[string]interface{})
 			for _, s := range c.Settings {
-				componentSettings[s.Key] = s.Value
+				// Para componentes regulares, também filtrar valores vazios
+				if s.Value != "" && len(strings.TrimSpace(s.Value)) > 0 {
+					componentSettings[s.Key] = s.Value
+				}
 			}
 			var itemsDTO []dtos.ComponentItemDTO
 			for _, item := range c.Items {
@@ -102,7 +105,10 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 					ComponentItemLink:         item.ComponentItemLink,
 				})
 			}
-			componentSettings["items"] = itemsDTO
+			// Só adicionar items se realmente existirem
+			if len(itemsDTO) > 0 {
+				componentSettings["items"] = itemsDTO
+			}
 			typeCode := ""
 			if c.Type != nil {
 				typeCode = c.Type.Code
@@ -127,15 +133,16 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 			ModuleActive:      module.ModuleActive, // Propaga o campo para o DTO
 			Components:        componentResponseDTOs,
 		})
-	}
-
-	// Buscar componente único do tipo navbar
+	} // Buscar componente único do tipo navbar
 	navbarComponent, _ := s.componentRepository.FindUniqueBySiteAndTypeCodeLike(site.ID, "navbar")
 	var navbarDTO *dtos.ComponentDTO
 	if navbarComponent != nil {
 		settings := make(map[string]interface{})
 		for _, s := range navbarComponent.Settings {
-			settings[s.Key] = s.Value
+			// Para componentes únicos, só incluir settings com valor não vazio
+			if s.Value != "" && len(strings.TrimSpace(s.Value)) > 0 {
+				settings[s.Key] = s.Value
+			}
 		}
 		typeCode := ""
 		if navbarComponent.Type != nil {
@@ -148,15 +155,16 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 			ComponentName:     navbarComponent.Name,
 			ComponentSettings: settings,
 		}
-	}
-
-	// Buscar componente único do tipo footer
+	} // Buscar componente único do tipo footer
 	footerComponent, _ := s.componentRepository.FindUniqueBySiteAndTypeCodeLike(site.ID, "footer")
 	var footerDTO *dtos.ComponentDTO
 	if footerComponent != nil {
 		settings := make(map[string]interface{})
 		for _, s := range footerComponent.Settings {
-			settings[s.Key] = s.Value
+			// Para componentes únicos, só incluir settings com valor não vazio
+			if s.Value != "" && len(strings.TrimSpace(s.Value)) > 0 {
+				settings[s.Key] = s.Value
+			}
 		}
 		typeCode := ""
 		if footerComponent.Type != nil {
