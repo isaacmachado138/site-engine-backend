@@ -16,21 +16,19 @@ import (
 func SetupRoutes(router *gin.Engine, deps interface{}) {
 	// Type assertion para o struct de dependências
 	appDeps := deps.(*config.AppDependencies)
-
 	userHandler := handlers.NewUserHandler(appDeps.UserService)
 	siteHandler := handlers.NewSiteHandler(appDeps.SiteService)
 	moduleHandler := handlers.NewModuleHandler(appDeps.ModuleService)
 	componentHandler := handlers.NewComponentHandler(appDeps.ComponentService)
-	componentSettingHandler := handlers.NewComponentSettingHandler(appDeps.ComponentSettingService)
-	componentItemHandler := handlers.NewComponentItemHandler(appDeps.ComponentItemService)
-
+	componentSettingHandler := handlers.NewComponentSettingHandler(appDeps.ComponentSettingService, appDeps.ComponentService)
+	componentItemHandler := handlers.NewComponentItemHandler(appDeps.ComponentItemService, appDeps.ComponentService)
 	// Usa setupAuthRoutes para configurar rotas de autenticação (apenas login e refresh agora)
-	setupAuthRoutes(router, appDeps.JWTMiddleware)
-
-	// Definir grupo base da API protegido
+	setupAuthRoutes(router, appDeps.JWTMiddleware) // Definir grupo base da API protegido
 	api := router.Group("/api")
 	api.Use(middlewares.TokenExtractor()) // Adiciona o TokenExtractor corretamente
 	api.Use(appDeps.JWTMiddleware.MiddlewareFunc())
+	api.Use(middlewares.TokenDebugger())   // Adiciona debug das claims do token
+	api.Use(middlewares.UserIDExtractor()) // Extrai o user_id_logged das claims
 	{
 		// Rota de criação de usuário agora exige autenticação e admin
 		api.POST("/user/register", middlewares.AdminRequired(), userHandler.Register)

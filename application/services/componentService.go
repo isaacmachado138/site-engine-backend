@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"myapp/application/dtos"
 	"myapp/application/interfaces/repositories"
 	"myapp/domain/entities"
@@ -11,6 +12,7 @@ type ComponentService struct {
 	componentRepository      repositories.ComponentRepository
 	componentTypeSettingRepo repositories.ComponentTypeSettingRepository
 	componentSettingRepo     repositories.ComponentSettingRepository
+	siteRepository           repositories.SiteRepository
 }
 
 // NewComponentService cria uma nova instância de ComponentService
@@ -18,11 +20,13 @@ func NewComponentService(
 	componentRepository repositories.ComponentRepository,
 	componentTypeSettingRepo repositories.ComponentTypeSettingRepository,
 	componentSettingRepo repositories.ComponentSettingRepository,
+	siteRepository repositories.SiteRepository,
 ) *ComponentService {
 	return &ComponentService{
 		componentRepository:      componentRepository,
 		componentTypeSettingRepo: componentTypeSettingRepo,
 		componentSettingRepo:     componentSettingRepo,
+		siteRepository:           siteRepository,
 	}
 }
 
@@ -117,4 +121,28 @@ func (s *ComponentService) GetByID(id uint) (*dtos.ComponentResponseDTO, error) 
 		UserId:            component.UserID,
 		ComponentSettings: componentSettings,
 	}, nil
+}
+
+// VerifyOwnership verifica se um componente pertence a um usuário específico através do site
+func (s *ComponentService) VerifyOwnership(componentID uint, userID uint) error {
+	component, err := s.componentRepository.FindByID(componentID)
+	if err != nil {
+		return err
+	}
+	if component == nil {
+		return errors.New("componente não encontrado")
+	}
+
+	// Verificar se o site do componente pertence ao usuário
+	site, err := s.siteRepository.FindByID(component.SiteId)
+	if err != nil {
+		return err
+	}
+	if site == nil {
+		return errors.New("site não encontrado")
+	}
+	if site.UserID != userID {
+		return errors.New("este componente não pertence ao usuário logado")
+	}
+	return nil
 }

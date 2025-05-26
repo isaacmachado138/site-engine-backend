@@ -30,12 +30,11 @@ func SetupDependencies(db *gorm.DB, cfg *Config) *AppDependencies {
 
 	userService := services.NewUserService(userRepo)
 	jwtMiddleware, _ := middlewares.SetupJWTMiddleware(userService, cfg.JWTSecret)
-
 	return &AppDependencies{
 		UserService:             userService,
 		SiteService:             services.NewSiteService(siteRepo, moduleRepo, componentRepo),
-		ModuleService:           services.NewModuleService(moduleRepo),
-		ComponentService:        services.NewComponentService(componentRepo, componentTypeSettingRepo, componentSettingRepo),
+		ModuleService:           services.NewModuleService(moduleRepo, siteRepo),
+		ComponentService:        services.NewComponentService(componentRepo, componentTypeSettingRepo, componentSettingRepo, siteRepo),
 		ComponentSettingService: services.NewComponentSettingService(componentSettingRepo),
 		ComponentItemService:    services.NewComponentItemService(componentItemRepo),
 		JWTMiddleware:           jwtMiddleware,

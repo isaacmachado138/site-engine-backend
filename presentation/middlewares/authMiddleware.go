@@ -46,6 +46,55 @@ func TokenExtractor() gin.HandlerFunc {
 	}
 }
 
+// TokenDebugger é um middleware para fazer debug das claims do JWT
+func TokenDebugger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims := jwt.ExtractClaims(c)
+
+		fmt.Printf("==== DEBUG TOKEN JWT ====\n")
+		fmt.Printf("Rota: %s %s\n", c.Request.Method, c.Request.URL.Path)
+		fmt.Printf("Claims completas do token:\n")
+		for key, value := range claims {
+			fmt.Printf("  %s: %v (tipo: %T)\n", key, value, value)
+		}
+		fmt.Printf("========================\n")
+
+		c.Next()
+	}
+}
+
+// UserIDExtractor é um middleware que extrai o ID do usuário das claims do JWT
+// e o disponibiliza no contexto como "user_id_logged"
+func UserIDExtractor() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims := jwt.ExtractClaims(c)
+
+		// Tenta extrair o ID do usuário das claims
+		if userID, exists := claims["id"]; exists {
+			// Converte o userID para string se necessário
+			var userIDStr string
+			switch v := userID.(type) {
+			case float64:
+				userIDStr = fmt.Sprintf("%.0f", v)
+			case string:
+				userIDStr = v
+			case int:
+				userIDStr = fmt.Sprintf("%d", v)
+			default:
+				userIDStr = fmt.Sprintf("%v", v)
+			}
+
+			// Define o user_id_logged no contexto
+			c.Set("user_id_logged", userIDStr)
+			fmt.Printf("[UserIDExtractor] ID do usuário extraído: %s\n", userIDStr)
+		} else {
+			fmt.Printf("[UserIDExtractor] AVISO: ID do usuário não encontrado nas claims\n")
+		}
+
+		c.Next()
+	}
+}
+
 // AdminRequired é um middleware que verifica se o usuário autenticado possui privilégios de administrador
 // através da propriedade "is_admin" nas claims do JWT. Caso contrário, a requisição é abortada com
 // status 403 Forbidden.
@@ -54,9 +103,17 @@ func AdminRequired() gin.HandlerFunc {
 		// Extrai as claims do token JWT da requisição atual
 		claims := jwt.ExtractClaims(c)
 
+		fmt.Printf("==== VERIFICAÇÃO ADMIN ====\n")
+		fmt.Printf("Rota: %s %s\n", c.Request.Method, c.Request.URL.Path)
+		fmt.Printf("Claims recebidas: %+v\n", claims)
+
 		// Verifica se a claim "is_admin" existe e se seu valor é true
 		isAdmin, exists := claims["is_admin"]
+		fmt.Printf("is_admin existe: %v, valor: %v (tipo: %T)\n", exists, isAdmin, isAdmin)
+
 		if !exists || isAdmin != true {
+			fmt.Printf("Acesso negado - usuário não é admin\n")
+			fmt.Printf("==========================\n")
 			// Retorna erro 403 para usuários não administradores
 			c.JSON(http.StatusForbidden, gin.H{
 				"code":    http.StatusForbidden,
@@ -66,6 +123,8 @@ func AdminRequired() gin.HandlerFunc {
 			return
 		}
 
+		fmt.Printf("Acesso permitido - usuário é admin\n")
+		fmt.Printf("==========================\n")
 		// Se for admin, permite a continuação da requisição
 		c.Next()
 	}
@@ -166,19 +225,27 @@ func SetupJWTMiddleware(userService *services.UserService, jwtSecret string) (*j
 			// Retorna claims vazias se a conversão falhar
 			return jwt.MapClaims{}
 		},
-
 		// IdentityHandler: extrai a identidade do usuário das claims do JWT
 		// durante a validação do token
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			fmt.Printf("IdentityHandler - Claims recebidas: %+v\n", claims)
+
+			fmt.Printf("==== IDENTITY HANDLER ====\n")
+			fmt.Printf("Rota: %s %s\n", c.Request.Method, c.Request.URL.Path)
+			fmt.Printf("Claims completas: %+v\n", claims)
 
 			// Verifica se todas as claims necessárias estão presentes
 			idVal, idExists := claims["id"]
 			emailVal, emailExists := claims["email"]
+			adminVal, adminExists := claims["is_admin"]
+
+			fmt.Printf("Claim 'id' existe: %v, valor: %v (tipo: %T)\n", idExists, idVal, idVal)
+			fmt.Printf("Claim 'email' existe: %v, valor: %v (tipo: %T)\n", emailExists, emailVal, emailVal)
+			fmt.Printf("Claim 'is_admin' existe: %v, valor: %v (tipo: %T)\n", adminExists, adminVal, adminVal)
 
 			if !idExists || !emailExists {
-				fmt.Printf("ALERTA: JWT incompleto ou inválido. Claims: %+v\n", claims)
+				fmt.Printf("ERRO: JWT incompleto ou inválido - claims obrigatórias ausentes\n")
+				fmt.Printf("========================\n")
 				return nil
 			}
 
@@ -186,16 +253,23 @@ func SetupJWTMiddleware(userService *services.UserService, jwtSecret string) (*j
 			var id uint
 			if idFloat, ok := idVal.(float64); ok {
 				id = uint(idFloat)
+				fmt.Printf("ID convertido com sucesso: %d\n", id)
 			} else {
-				fmt.Printf("ERRO: Campo 'id' não é um número: %T = %v\n", idVal, idVal)
+				fmt.Printf("ERRO: Campo 'id' não é um número válido: %T = %v\n", idVal, idVal)
+				fmt.Printf("========================\n")
 				return nil
 			}
 
 			// Reconstrói o objeto de usuário a partir das claims
-			return &dtos.UserResponseDTO{
+			userDTO := &dtos.UserResponseDTO{
 				UserID:    id,
 				UserEmail: emailVal.(string),
 			}
+
+			fmt.Printf("Usuário reconstruído: ID=%d, Email=%s\n", userDTO.UserID, userDTO.UserEmail)
+			fmt.Printf("========================\n")
+
+			return userDTO
 		},
 
 		// Authorizator: define regras de autorização após a autenticação

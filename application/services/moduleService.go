@@ -10,12 +10,14 @@ import (
 // ModuleService lida com operações relacionadas a módulos
 type ModuleService struct {
 	moduleRepository repositories.ModuleRepository
+	siteRepository   repositories.SiteRepository
 }
 
 // NewModuleService cria uma nova instância de ModuleService
-func NewModuleService(moduleRepository repositories.ModuleRepository) *ModuleService {
+func NewModuleService(moduleRepository repositories.ModuleRepository, siteRepository repositories.SiteRepository) *ModuleService {
 	return &ModuleService{
 		moduleRepository: moduleRepository,
+		siteRepository:   siteRepository,
 	}
 }
 
@@ -86,4 +88,28 @@ func (s *ModuleService) Update(moduleID uint, updateDTO dtos.ModuleUpdateDTO) (*
 		SiteID:            module.SiteID,
 		ModuleActive:      module.ModuleActive,
 	}, nil
+}
+
+// VerifyOwnership verifica se um módulo pertence a um usuário específico através do site
+func (s *ModuleService) VerifyOwnership(moduleID uint, userID uint) error {
+	module, err := s.moduleRepository.FindByID(moduleID)
+	if err != nil {
+		return err
+	}
+	if module == nil {
+		return errors.New("módulo não encontrado")
+	}
+
+	// Verificar se o site do módulo pertence ao usuário
+	site, err := s.siteRepository.FindByID(module.SiteID)
+	if err != nil {
+		return err
+	}
+	if site == nil {
+		return errors.New("site não encontrado")
+	}
+	if site.UserID != userID {
+		return errors.New("este módulo não pertence ao usuário logado")
+	}
+	return nil
 }

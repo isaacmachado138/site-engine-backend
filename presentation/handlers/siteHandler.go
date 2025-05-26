@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"myapp/application/dtos"
 	"myapp/application/services"
@@ -77,6 +78,19 @@ func (h *SiteHandler) GetSitesByUser(c *gin.Context) {
 
 // Update lida com a atualização parcial de sites
 func (h *SiteHandler) Update(c *gin.Context) {
+	// Extrair user ID do contexto
+	userIDStr, exists := c.Get("user_id_logged")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	userID, err := strconv.ParseUint(userIDStr.(string), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de usuário inválido"})
+		return
+	}
+
 	var updateDTO dtos.SiteUpdateDTO
 	if err := c.ShouldBindJSON(&updateDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
@@ -84,11 +98,18 @@ func (h *SiteHandler) Update(c *gin.Context) {
 	}
 	siteIDParam := c.Param("siteId")
 	var siteID uint
-	_, err := fmt.Sscanf(siteIDParam, "%d", &siteID)
+	_, err = fmt.Sscanf(siteIDParam, "%d", &siteID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
 		return
 	}
+
+	// Verificar se o site pertence ao usuário logado
+	if err := h.siteService.VerifyOwnership(siteID, uint(userID)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	site, err := h.siteService.Update(siteID, updateDTO)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

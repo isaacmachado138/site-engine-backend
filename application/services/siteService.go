@@ -234,3 +234,18 @@ func (s *SiteService) Update(siteID uint, updateDTO dtos.SiteUpdateDTO) (*dtos.S
 		SiteIconWindow: site.SiteIconWindow,
 	}, nil
 }
+
+// VerifyOwnership verifica se um site pertence a um usuário específico
+func (s *SiteService) VerifyOwnership(siteID uint, userID uint) error {
+	site, err := s.siteRepository.FindByID(siteID)
+	if err != nil {
+		return err
+	}
+	if site == nil {
+		return errors.New("site não encontrado")
+	}
+	if site.UserID != userID {
+		return errors.New("este site não pertence ao usuário logado")
+	}
+	return nil
+}

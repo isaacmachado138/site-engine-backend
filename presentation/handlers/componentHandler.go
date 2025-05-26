@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"myapp/application/dtos"
 	"myapp/application/services"
@@ -41,6 +42,19 @@ func (h *ComponentHandler) Create(c *gin.Context) {
 
 // GetByID busca um componente específico pelo ID
 func (h *ComponentHandler) GetByID(c *gin.Context) {
+	// Extrair user ID do contexto
+	userIDStr, exists := c.Get("user_id_logged")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	userID, err := strconv.ParseUint(userIDStr.(string), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de usuário inválido"})
+		return
+	}
+
 	componentID := c.Param("componentId")
 	if componentID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do componente é obrigatório"})
@@ -51,6 +65,12 @@ func (h *ComponentHandler) GetByID(c *gin.Context) {
 	var id uint
 	if _, err := fmt.Sscanf(componentID, "%d", &id); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do componente inválido"})
+		return
+	}
+
+	// Verificar se o componente pertence ao usuário logado
+	if err := h.componentService.VerifyOwnership(id, uint(userID)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
