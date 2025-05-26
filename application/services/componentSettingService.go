@@ -24,8 +24,8 @@ func (s *ComponentSettingService) UpsertMany(componentID uint, dtosSettings []dt
 			Value:       dto.ComponentSettingValue,
 		})
 	}
-	// Apenas insere novas settings, não deleta mais as antigas
-	return s.repo.CreateMany(componentID, settings)
+	// Agora faz upsert real: insere se não existir, atualiza se existir
+	return s.repo.UpsertMany(componentID, settings)
 }
 
 func (s *ComponentSettingService) GetByComponentID(componentID uint) ([]dtos.ComponentSettingResponseDTO, error) {

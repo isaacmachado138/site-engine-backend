@@ -6,6 +6,7 @@ import "myapp/domain/entities"
 type ComponentSettingRepository interface {
 	CreateMany(componentID uint, settings []entities.ComponentSetting) error
 	UpdateMany(componentID uint, settings []entities.ComponentSetting) error
+	UpsertMany(componentID uint, settings []entities.ComponentSetting) error
 	DeleteByComponentID(componentID uint) error
 	FindByComponentID(componentID uint) ([]entities.ComponentSetting, error)
 }

@@ -5,7 +5,7 @@ package dtos
 // Exemplo de uso: [{component_setting_key: "key", component_setting_value: "value"}, ...]
 type ComponentSettingCreateDTO struct {
 	ComponentSettingKey   string `json:"component_setting_key" binding:"required"`
-	ComponentSettingValue string `json:"component_setting_value" binding:"required"`
+	ComponentSettingValue string `json:"component_setting_value"`
 }
 
 type ComponentSettingResponseDTO struct {

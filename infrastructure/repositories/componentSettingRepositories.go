@@ -31,6 +31,24 @@ func (r *componentSettingRepository) UpdateMany(componentID uint, settings []ent
 	return nil
 }
 
+func (r *componentSettingRepository) UpsertMany(componentID uint, settings []entities.ComponentSetting) error {
+	for _, s := range settings {
+		s.ComponentID = componentID
+		// Usar ON DUPLICATE KEY UPDATE para MySQL ou similar para outros DBs
+		err := r.db.Where("component_id = ? AND component_setting_key = ?", componentID, s.Key).
+			Assign(entities.ComponentSetting{
+				ComponentID: componentID,
+				Key:         s.Key,
+				Value:       s.Value,
+			}).
+			FirstOrCreate(&s)
+		if err.Error != nil {
+			return err.Error
+		}
+	}
+	return nil
+}
+
 func (r *componentSettingRepository) DeleteByComponentID(componentID uint) error {
 	return r.db.Where("component_id = ?", componentID).Delete(&entities.ComponentSetting{}).Error
 }
