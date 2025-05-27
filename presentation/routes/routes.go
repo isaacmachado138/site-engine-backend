@@ -63,7 +63,7 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 	router.GET("/api/:userId/sites", siteHandler.GetSitesByUser)
 
 	// Rotas para categorias
-	router.GET("/categories/active", categoryHandler.GetActiveCategories)
+	router.GET("/api/categories/active", categoryHandler.GetActiveCategories)
 }
 
 // setupHealthRoutes configura rotas de health check

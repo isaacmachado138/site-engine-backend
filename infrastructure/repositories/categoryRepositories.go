@@ -44,7 +44,7 @@ func (r *CategoryRepository) FindAll() ([]entities.Category, error) {
 
 func (r *CategoryRepository) FindActive() ([]entities.Category, error) {
 	var categories []entities.Category
-	if err := r.db.Where("category_active = ?", true).Find(&categories).Error; err != nil {
+	if err := r.db.Where("category_active = ?", true).Order("category_name ASC").Find(&categories).Error; err != nil {
 		return nil, err
 	}
 	return categories, nil
