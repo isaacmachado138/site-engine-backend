@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"myapp/application/dtos"
 	"myapp/application/services"
 	"net/http"
@@ -42,4 +43,45 @@ func (h *SiteCategoryHandler) RemoveCategoryFromSite(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Associação removida"})
+}
+
+// GetCategoriesBySite busca todas as categorias associadas a um site
+func (h *SiteCategoryHandler) GetCategoriesBySite(c *gin.Context) {
+	siteID := c.Param("siteId")
+	var siteIDUint uint
+	if _, err := fmt.Sscanf(siteID, "%d", &siteIDUint); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do site inválido"})
+		return
+	}
+
+	categoryIDs, err := h.siteCategoryService.GetCategoriesBySite(siteIDUint)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, categoryIDs)
+}
+
+// UpdateSiteCategories atualiza todas as categorias de um site
+func (h *SiteCategoryHandler) UpdateSiteCategories(c *gin.Context) {
+	siteID := c.Param("siteId")
+	var siteIDUint uint
+	if _, err := fmt.Sscanf(siteID, "%d", &siteIDUint); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do site inválido"})
+		return
+	}
+
+	var categoryIDs []uint
+	if err := c.ShouldBindJSON(&categoryIDs); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
+		return
+	}
+
+	if err := h.siteCategoryService.UpdateSiteCategories(siteIDUint, categoryIDs); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Categorias atualizadas com sucesso"})
 }

@@ -29,3 +29,15 @@ func (r *SiteCategoryRepository) FindBySiteAndCategory(siteID, categoryID uint) 
 	}
 	return &sc, nil
 }
+
+func (r *SiteCategoryRepository) FindBySiteID(siteID uint) ([]entities.SiteCategory, error) {
+	var siteCategories []entities.SiteCategory
+	if err := r.db.Where("site_id = ?", siteID).Find(&siteCategories).Error; err != nil {
+		return nil, err
+	}
+	return siteCategories, nil
+}
+
+func (r *SiteCategoryRepository) DeleteBySiteID(siteID uint) error {
+	return r.db.Delete(&entities.SiteCategory{}, "site_id = ?", siteID).Error
+}

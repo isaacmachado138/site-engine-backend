@@ -22,7 +22,8 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 	componentHandler := handlers.NewComponentHandler(appDeps.ComponentService)
 	componentSettingHandler := handlers.NewComponentSettingHandler(appDeps.ComponentSettingService, appDeps.ComponentService)
 	componentItemHandler := handlers.NewComponentItemHandler(appDeps.ComponentItemService, appDeps.ComponentService)
-	categoryHandler := handlers.NewCategoryHandler(appDeps.CategoryService) // Novo manipulador para categorias
+	categoryHandler := handlers.NewCategoryHandler(appDeps.CategoryService)             // Novo manipulador para categorias
+	siteCategoryHandler := handlers.NewSiteCategoryHandler(appDeps.SiteCategoryService) // Handler para categorias de sites
 	// Usa setupAuthRoutes para configurar rotas de autenticação (apenas login e refresh agora)
 	setupAuthRoutes(router, appDeps.JWTMiddleware) // Definir grupo base da API protegido
 	api := router.Group("/api")
@@ -34,11 +35,13 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 		// Rota de criação de usuário agora exige autenticação e admin
 		api.POST("/user/register", middlewares.AdminRequired(), userHandler.Register)
 
-		api.POST("/categories", categoryHandler.Create)
-
-		// Rotas de sites
+		api.POST("/categories", categoryHandler.Create)		// Rotas de sites
 		api.POST("/site", siteHandler.Create)
 		api.PUT("/site/:siteId", siteHandler.Update)
+
+		// Rotas de categorias de sites
+		api.GET("/site/categories/:siteId", siteCategoryHandler.GetCategoriesBySite)
+		api.PUT("/site/categories/:siteId", siteCategoryHandler.UpdateSiteCategories)
 
 		// Rotas de módulos
 		api.POST("/site/module", moduleHandler.Create)
