@@ -195,9 +195,12 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 func (s *SiteService) GetSitesByUser(userId string) ([]dtos.SiteResponseDTO, error) {
 	sites, err := s.siteRepository.FindByUserID(userId)
 	if err != nil {
-		return nil, err
+		return []dtos.SiteResponseDTO{}, err
 	}
-	var resp []dtos.SiteResponseDTO
+
+	// Inicializar como array vazio para garantir que retorna [] ao invés de null
+	resp := make([]dtos.SiteResponseDTO, 0)
+
 	for _, site := range sites {
 		resp = append(resp, dtos.SiteResponseDTO{
 			SiteID:         site.ID,
@@ -262,10 +265,12 @@ func (s *SiteService) VerifyOwnership(siteID uint, userID uint) error {
 func (s *SiteService) GetSitesWithFilters(filters repositories.SiteFilters) ([]dtos.SiteResponseDTO, error) {
 	sites, err := s.siteRepository.FindWithFilters(filters)
 	if err != nil {
-		return nil, err
+		return []dtos.SiteResponseDTO{}, err
 	}
 
-	var resp []dtos.SiteResponseDTO
+	// Inicializar como array vazio para garantir que retorna [] ao invés de null
+	resp := make([]dtos.SiteResponseDTO, 0)
+
 	for _, site := range sites {
 		resp = append(resp, dtos.SiteResponseDTO{
 			SiteID:         site.ID,
