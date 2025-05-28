@@ -35,7 +35,7 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 		// Rota de criação de usuário agora exige autenticação e admin
 		api.POST("/user/register", middlewares.AdminRequired(), userHandler.Register)
 
-		api.POST("/categories", categoryHandler.Create)		// Rotas de sites
+		api.POST("/categories", categoryHandler.Create) // Rotas de sites
 		api.POST("/site", siteHandler.Create)
 		api.PUT("/site/:siteId", siteHandler.Update)
 
