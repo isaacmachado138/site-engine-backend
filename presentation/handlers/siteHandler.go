@@ -86,12 +86,12 @@ func (h *SiteHandler) GetSites(c *gin.Context) {
 	activeStr := c.Query("active")
 
 	// Validar se pelo menos um parâmetro foi fornecido
-	if userID == "" && categoryIDStr == "" && activeStr == "" {
+	/*if userID == "" && categoryIDStr == "" && activeStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Pelo menos um parâmetro de busca é obrigatório (user_id, category_id, active, etc.)",
 		})
 		return
-	}
+	}*/
 
 	// Construir filtros dinamicamente
 	var filters repositories.SiteFilters
