@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"myapp/application/dtos"
+	"myapp/application/interfaces/repositories"
 	"myapp/application/services"
 
 	"github.com/gin-gonic/gin"
@@ -69,6 +70,56 @@ func (h *SiteHandler) GetSitesByUser(c *gin.Context) {
 		return
 	}
 	sites, err := h.siteService.GetSitesByUser(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, sites)
+}
+
+// GetSites - Método genérico para buscar sites com diferentes filtros dinâmicos
+// Suporta parâmetros: ?user_id=123, ?category_id=456, ?active=true, etc.
+func (h *SiteHandler) GetSites(c *gin.Context) {
+	// Extrair parâmetros de query
+	userID := c.Query("user_id")
+	categoryIDStr := c.Query("category_id")
+	activeStr := c.Query("active")
+
+	// Validar se pelo menos um parâmetro foi fornecido
+	if userID == "" && categoryIDStr == "" && activeStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Pelo menos um parâmetro de busca é obrigatório (user_id, category_id, active, etc.)",
+		})
+		return
+	}
+
+	// Construir filtros dinamicamente
+	var filters repositories.SiteFilters
+
+	// Aplicar filtro de user_id se fornecido
+	if userID != "" {
+		filters.UserID = &userID
+	}
+
+	// Aplicar filtro de category_id se fornecido
+	if categoryIDStr != "" {
+		categoryID, err := strconv.ParseUint(categoryIDStr, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "category_id deve ser um número válido"})
+			return
+		}
+		categoryIDUint := uint(categoryID)
+		filters.CategoryID = &categoryIDUint
+	}
+
+	// Aplicar filtro de active se fornecido
+	if activeStr != "" {
+		active := activeStr == "true" || activeStr == "1"
+		filters.Active = &active
+	}
+
+	// Chamar serviço genérico
+	sites, err := h.siteService.GetSitesWithFilters(filters)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

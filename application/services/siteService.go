@@ -257,3 +257,23 @@ func (s *SiteService) VerifyOwnership(siteID uint, userID uint) error {
 	}
 	return nil
 }
+
+// GetSitesWithFilters busca sites usando filtros genéricos
+func (s *SiteService) GetSitesWithFilters(filters repositories.SiteFilters) ([]dtos.SiteResponseDTO, error) {
+	sites, err := s.siteRepository.FindWithFilters(filters)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp []dtos.SiteResponseDTO
+	for _, site := range sites {
+		resp = append(resp, dtos.SiteResponseDTO{
+			SiteID:         site.ID,
+			SiteName:       site.Name,
+			SiteSlug:       site.Slug,
+			SiteIconWindow: site.SiteIconWindow,
+			UserID:         site.UserID,
+		})
+	}
+	return resp, nil
+}

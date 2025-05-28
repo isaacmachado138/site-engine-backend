@@ -54,3 +54,29 @@ func (r *siteRepository) FindByID(siteID uint) (*entities.Site, error) {
 func (r *siteRepository) Update(site *entities.Site) error {
 	return r.db.Save(site).Error
 }
+
+func (r *siteRepository) FindWithFilters(filters repositories.SiteFilters) ([]entities.Site, error) {
+	var sites []entities.Site
+	query := r.db.Model(&entities.Site{})
+
+	// Aplicar filtro por user_id se fornecido
+	if filters.UserID != nil && *filters.UserID != "" {
+		query = query.Where("user_id = ?", *filters.UserID)
+	}
+
+	// Aplicar filtro por category_id se fornecido
+	if filters.CategoryID != nil && *filters.CategoryID > 0 {
+		query = query.Joins("JOIN site_category ON site.site_id = site_category.site_id").
+			Where("site_category.category_id = ?", *filters.CategoryID)
+	}
+
+	// Aplicar filtro por status ativo se fornecido (para futuro uso)
+	if filters.Active != nil {
+		// Quando implementarmos o campo active na tabela site
+		// query = query.Where("site_active = ?", *filters.Active)
+	}
+
+	// Executar a consulta
+	err := query.Find(&sites).Error
+	return sites, err
+}

@@ -55,12 +55,14 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 		api.POST("/site/component/:componentId/items", componentItemHandler.UpsertMany)
 		api.GET("/site/component/:componentId/items", componentItemHandler.FindByComponentID)
 	}
-
 	// Rota pública para buscar site por slug
 	router.GET("/api/site/:slug", siteHandler.GetBySlug)
 
 	// Rota para buscar todos os sites de um usuário
 	router.GET("/api/:userId/sites", siteHandler.GetSitesByUser)
+
+	// Rota genérica para buscar sites (por user_id ou category_id)
+	router.GET("/api/sites", siteHandler.GetSites)
 
 	// Rotas para categorias
 	router.GET("/api/categories/active", categoryHandler.GetActiveCategories)
