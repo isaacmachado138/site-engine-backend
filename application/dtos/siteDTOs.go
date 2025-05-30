@@ -2,30 +2,49 @@ package dtos
 
 // SiteCreateDTO representa os dados necessários para criar um site
 type SiteCreateDTO struct {
-	SiteName       string `json:"site_name" binding:"required"`
-	SiteSlug       string `json:"site_slug" binding:"required"`
-	UserID         uint   `json:"user_id" binding:"required"`
-	SiteIconWindow string `json:"site_icon_window"`
+	SiteName          string `json:"site_name" binding:"required"`
+	SiteSlug          string `json:"site_slug" binding:"required"`
+	SiteDescription   string `json:"site_description"`
+	CityID            *uint  `json:"city_id"`
+	SiteKeywords      string `json:"site_keywords"`
+	SitePhoneWhatsapp string `json:"site_phone_whatsapp"`
+	SitePhone         string `json:"site_phone"`
+	UserID            uint   `json:"user_id" binding:"required"`
+	SiteIconWindow    string `json:"site_icon_window"`
 }
 
 // SiteResponseDTO representa os dados retornados após a criação de um site
 type SiteResponseDTO struct {
-	SiteID         uint   `json:"site_id"`
-	SiteName       string `json:"site_name"`
-	SiteSlug       string `json:"site_slug"`
-	UserID         uint   `json:"user_id"`
-	SiteIconWindow string `json:"site_icon_window"`
+	SiteID            uint   `json:"site_id"`
+	SiteName          string `json:"site_name"`
+	SiteSlug          string `json:"site_slug"`
+	SiteDescription   string `json:"site_description"`
+	CityID            *uint  `json:"city_id"`
+	CityName          string `json:"city_name,omitempty"`
+	SiteHasWebsite    bool   `json:"site_has_website"`
+	SiteKeywords      string `json:"site_keywords"`
+	SitePhoneWhatsapp string `json:"site_phone_whatsapp"`
+	SitePhone         string `json:"site_phone"`
+	UserID            uint   `json:"user_id"`
+	SiteIconWindow    string `json:"site_icon_window"`
 }
 
 // SiteFullResponseDTO representa o site completo com módulos e componentes
 type SiteFullResponseDTO struct {
-	SiteID         uint                      `json:"site_id"`
-	SiteName       string                    `json:"site_name"`
-	SiteSlug       string                    `json:"site_slug"`
-	SiteIconWindow string                    `json:"site_icon_window"`
-	Modules        []ModuleWithComponentsDTO `json:"modules"`
-	Navbar         *ComponentDTO             `json:"navbar,omitempty"`
-	Footer         *ComponentDTO             `json:"footer,omitempty"`
+	SiteID            uint                      `json:"site_id"`
+	SiteName          string                    `json:"site_name"`
+	SiteSlug          string                    `json:"site_slug"`
+	SiteDescription   string                    `json:"site_description"`
+	CityID            *uint                     `json:"city_id"`
+	CityName          string                    `json:"city_name,omitempty"`
+	SiteHasWebsite    bool                      `json:"site_has_website"`
+	SiteKeywords      string                    `json:"site_keywords"`
+	SitePhoneWhatsapp string                    `json:"site_phone_whatsapp"`
+	SitePhone         string                    `json:"site_phone"`
+	SiteIconWindow    string                    `json:"site_icon_window"`
+	Modules           []ModuleWithComponentsDTO `json:"modules"`
+	Navbar            *ComponentDTO             `json:"navbar,omitempty"`
+	Footer            *ComponentDTO             `json:"footer,omitempty"`
 }
 
 type ModuleWithComponentsDTO struct {
@@ -70,8 +89,13 @@ type ComponentDTO struct {
 // Todos os campos são opcionais
 // Adicione a tag 'omitempty' para permitir update parcial
 type SiteUpdateDTO struct {
-	SiteName       *string `json:"site_name,omitempty"`
-	SiteSlug       *string `json:"site_slug,omitempty"`
-	UserID         *uint   `json:"user_id,omitempty"`
-	SiteIconWindow *string `json:"site_icon_window,omitempty"`
+	SiteName          *string `json:"site_name,omitempty"`
+	SiteSlug          *string `json:"site_slug,omitempty"`
+	SiteDescription   *string `json:"site_description,omitempty"`
+	CityID            *uint   `json:"city_id,omitempty"`
+	SiteKeywords      *string `json:"site_keywords,omitempty"`
+	SitePhoneWhatsapp *string `json:"site_phone_whatsapp,omitempty"`
+	SitePhone         *string `json:"site_phone,omitempty"`
+	UserID            *uint   `json:"user_id,omitempty"`
+	SiteIconWindow    *string `json:"site_icon_window,omitempty"`
 }

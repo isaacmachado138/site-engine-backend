@@ -19,7 +19,7 @@ func NewCityRepository(db *gorm.DB) *CityRepository {
 // FindAll busca todas as cidades
 func (r *CityRepository) FindAll() ([]entities.City, error) {
 	var cities []entities.City
-	if err := r.db.Find(&cities).Error; err != nil {
+	if err := r.db.Order("city_name ASC").Find(&cities).Error; err != nil {
 		return nil, err
 	}
 	return cities, nil

@@ -26,7 +26,7 @@ func (r *siteRepository) Create(site *entities.Site) error {
 
 func (r *siteRepository) FindBySlug(slug string) (*entities.Site, error) {
 	var site entities.Site
-	if err := r.db.Where("site_slug = ?", slug).First(&site).Error; err != nil {
+	if err := r.db.Preload("City").Where("site_slug = ?", slug).First(&site).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
@@ -37,14 +37,14 @@ func (r *siteRepository) FindBySlug(slug string) (*entities.Site, error) {
 
 func (r *siteRepository) FindByUserID(userId string) ([]entities.Site, error) {
 	var sites []entities.Site
-	err := r.db.Where("user_id = ?", userId).Find(&sites).Error
+	err := r.db.Preload("City").Where("user_id = ?", userId).Find(&sites).Error
 	return sites, err
 }
 
 // FindByID busca um site pelo ID
 func (r *siteRepository) FindByID(siteID uint) (*entities.Site, error) {
 	var site entities.Site
-	if err := r.db.First(&site, siteID).Error; err != nil {
+	if err := r.db.Preload("City").First(&site, siteID).Error; err != nil {
 		return nil, err
 	}
 	return &site, nil
@@ -70,13 +70,22 @@ func (r *siteRepository) FindWithFilters(filters repositories.SiteFilters) ([]en
 			Where("site_category.category_id = ?", *filters.CategoryID)
 	}
 
+	// Aplicar filtro por nome se fornecido (busca com LIKE)
+	if filters.Name != nil && *filters.Name != "" {
+		query = query.Where("site_name LIKE ?", "%"+*filters.Name+"%")
+	}
+
+	// Aplicar filtro por city_id se fornecido
+	if filters.CityID != nil && *filters.CityID > 0 {
+		query = query.Where("city_id = ?", *filters.CityID)
+	}
+
 	// Aplicar filtro por status ativo se fornecido (para futuro uso)
 	if filters.Active != nil {
 		// Quando implementarmos o campo active na tabela site
 		// query = query.Where("site_active = ?", *filters.Active)
 	}
-
 	// Executar a consulta
-	err := query.Find(&sites).Error
+	err := query.Preload("City").Find(&sites).Error
 	return sites, err
 }

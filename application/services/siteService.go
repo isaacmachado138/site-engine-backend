@@ -29,6 +29,11 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 	site := &entities.Site{
 		Name:           siteDTO.SiteName,
 		Slug:           siteDTO.SiteSlug,
+		Description:    siteDTO.SiteDescription,
+		CityID:         siteDTO.CityID,
+		Keywords:       siteDTO.SiteKeywords,
+		PhoneWhatsapp:  siteDTO.SitePhoneWhatsapp,
+		Phone:          siteDTO.SitePhone,
 		UserID:         siteDTO.UserID,
 		SiteIconWindow: siteDTO.SiteIconWindow,
 	}
@@ -36,12 +41,25 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 	if err := s.siteRepository.Create(site); err != nil {
 		return nil, err
 	}
+	// Buscar o nome da cidade se CityID foi fornecido
+	cityName := ""
+	if site.CityID != nil && site.City != nil {
+		cityName = site.City.CityName
+	}
 
 	return &dtos.SiteResponseDTO{
-		SiteID:         site.ID,
-		SiteName:       site.Name,
-		SiteSlug:       site.Slug,
-		SiteIconWindow: site.SiteIconWindow,
+		SiteID:            site.ID,
+		SiteName:          site.Name,
+		SiteSlug:          site.Slug,
+		SiteDescription:   site.Description,
+		CityID:            site.CityID,
+		CityName:          cityName,
+		SiteHasWebsite:    site.HasWebsite,
+		SiteKeywords:      site.Keywords,
+		SitePhoneWhatsapp: site.PhoneWhatsapp,
+		SitePhone:         site.Phone,
+		UserID:            site.UserID,
+		SiteIconWindow:    site.SiteIconWindow,
 	}, nil
 }
 
@@ -178,16 +196,27 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 			ComponentSettings: settings,
 		}
 	}
-
 	// Retornando o DTO completo do site
+	cityName := ""
+	if site.CityID != nil && site.City != nil {
+		cityName = site.City.CityName
+	}
+
 	return &dtos.SiteFullResponseDTO{
-		SiteID:         site.ID,
-		SiteName:       site.Name,
-		SiteSlug:       site.Slug,
-		SiteIconWindow: site.SiteIconWindow,
-		Modules:        modulesWithComponents,
-		Navbar:         navbarDTO,
-		Footer:         footerDTO,
+		SiteID:            site.ID,
+		SiteName:          site.Name,
+		SiteSlug:          site.Slug,
+		SiteDescription:   site.Description,
+		CityID:            site.CityID,
+		CityName:          cityName,
+		SiteHasWebsite:    site.HasWebsite,
+		SiteKeywords:      site.Keywords,
+		SitePhoneWhatsapp: site.PhoneWhatsapp,
+		SitePhone:         site.Phone,
+		SiteIconWindow:    site.SiteIconWindow,
+		Modules:           modulesWithComponents,
+		Navbar:            navbarDTO,
+		Footer:            footerDTO,
 	}, nil
 }
 
@@ -202,12 +231,24 @@ func (s *SiteService) GetSitesByUser(userId string) ([]dtos.SiteResponseDTO, err
 	resp := make([]dtos.SiteResponseDTO, 0)
 
 	for _, site := range sites {
+		cityName := ""
+		if site.CityID != nil && site.City != nil {
+			cityName = site.City.CityName
+		}
+
 		resp = append(resp, dtos.SiteResponseDTO{
-			SiteID:         site.ID,
-			SiteName:       site.Name,
-			SiteSlug:       site.Slug,
-			SiteIconWindow: site.SiteIconWindow,
-			UserID:         site.UserID,
+			SiteID:            site.ID,
+			SiteName:          site.Name,
+			SiteSlug:          site.Slug,
+			SiteDescription:   site.Description,
+			CityID:            site.CityID,
+			CityName:          cityName,
+			SiteHasWebsite:    site.HasWebsite,
+			SiteKeywords:      site.Keywords,
+			SitePhoneWhatsapp: site.PhoneWhatsapp,
+			SitePhone:         site.Phone,
+			SiteIconWindow:    site.SiteIconWindow,
+			UserID:            site.UserID,
 		})
 	}
 	return resp, nil
@@ -228,6 +269,21 @@ func (s *SiteService) Update(siteID uint, updateDTO dtos.SiteUpdateDTO) (*dtos.S
 	if updateDTO.SiteSlug != nil {
 		site.Slug = *updateDTO.SiteSlug
 	}
+	if updateDTO.SiteDescription != nil {
+		site.Description = *updateDTO.SiteDescription
+	}
+	if updateDTO.CityID != nil {
+		site.CityID = updateDTO.CityID
+	}
+	if updateDTO.SiteKeywords != nil {
+		site.Keywords = *updateDTO.SiteKeywords
+	}
+	if updateDTO.SitePhoneWhatsapp != nil {
+		site.PhoneWhatsapp = *updateDTO.SitePhoneWhatsapp
+	}
+	if updateDTO.SitePhone != nil {
+		site.Phone = *updateDTO.SitePhone
+	}
 	if updateDTO.UserID != nil {
 		site.UserID = *updateDTO.UserID
 	}
@@ -237,12 +293,25 @@ func (s *SiteService) Update(siteID uint, updateDTO dtos.SiteUpdateDTO) (*dtos.S
 	if err := s.siteRepository.Update(site); err != nil {
 		return nil, err
 	}
+
+	cityName := ""
+	if site.CityID != nil && site.City != nil {
+		cityName = site.City.CityName
+	}
+
 	return &dtos.SiteResponseDTO{
-		SiteID:         site.ID,
-		SiteName:       site.Name,
-		SiteSlug:       site.Slug,
-		UserID:         site.UserID,
-		SiteIconWindow: site.SiteIconWindow,
+		SiteID:            site.ID,
+		SiteName:          site.Name,
+		SiteSlug:          site.Slug,
+		SiteDescription:   site.Description,
+		CityID:            site.CityID,
+		CityName:          cityName,
+		SiteHasWebsite:    site.HasWebsite,
+		SiteKeywords:      site.Keywords,
+		SitePhoneWhatsapp: site.PhoneWhatsapp,
+		SitePhone:         site.Phone,
+		UserID:            site.UserID,
+		SiteIconWindow:    site.SiteIconWindow,
 	}, nil
 }
 
@@ -272,12 +341,24 @@ func (s *SiteService) GetSitesWithFilters(filters repositories.SiteFilters) ([]d
 	resp := make([]dtos.SiteResponseDTO, 0)
 
 	for _, site := range sites {
+		cityName := ""
+		if site.CityID != nil && site.City != nil {
+			cityName = site.City.CityName
+		}
+
 		resp = append(resp, dtos.SiteResponseDTO{
-			SiteID:         site.ID,
-			SiteName:       site.Name,
-			SiteSlug:       site.Slug,
-			SiteIconWindow: site.SiteIconWindow,
-			UserID:         site.UserID,
+			SiteID:            site.ID,
+			SiteName:          site.Name,
+			SiteSlug:          site.Slug,
+			SiteDescription:   site.Description,
+			CityID:            site.CityID,
+			CityName:          cityName,
+			SiteHasWebsite:    site.HasWebsite,
+			SiteKeywords:      site.Keywords,
+			SitePhoneWhatsapp: site.PhoneWhatsapp,
+			SitePhone:         site.Phone,
+			SiteIconWindow:    site.SiteIconWindow,
+			UserID:            site.UserID,
 		})
 	}
 	return resp, nil

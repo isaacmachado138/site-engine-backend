@@ -78,20 +78,14 @@ func (h *SiteHandler) GetSitesByUser(c *gin.Context) {
 }
 
 // GetSites - Método genérico para buscar sites com diferentes filtros dinâmicos
-// Suporta parâmetros: ?user_id=123, ?category_id=456, ?active=true, etc.
+// Suporta parâmetros: ?user_id=123, ?category_id=456, ?active=true, ?name=exemplo, ?city_id=789
 func (h *SiteHandler) GetSites(c *gin.Context) {
 	// Extrair parâmetros de query
 	userID := c.Query("user_id")
 	categoryIDStr := c.Query("category_id")
 	activeStr := c.Query("active")
-
-	// Validar se pelo menos um parâmetro foi fornecido
-	/*if userID == "" && categoryIDStr == "" && activeStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Pelo menos um parâmetro de busca é obrigatório (user_id, category_id, active, etc.)",
-		})
-		return
-	}*/
+	name := c.Query("name")
+	cityIDStr := c.Query("city_id")
 
 	// Construir filtros dinamicamente
 	var filters repositories.SiteFilters
@@ -116,6 +110,22 @@ func (h *SiteHandler) GetSites(c *gin.Context) {
 	if activeStr != "" {
 		active := activeStr == "true" || activeStr == "1"
 		filters.Active = &active
+	}
+
+	// Aplicar filtro de nome se fornecido
+	if name != "" {
+		filters.Name = &name
+	}
+
+	// Aplicar filtro de city_id se fornecido
+	if cityIDStr != "" {
+		cityID, err := strconv.ParseUint(cityIDStr, 10, 32)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "city_id deve ser um número válido"})
+			return
+		}
+		cityIDUint := uint(cityID)
+		filters.CityID = &cityIDUint
 	}
 
 	// Chamar serviço genérico
