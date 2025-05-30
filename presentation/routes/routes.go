@@ -24,6 +24,7 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 	componentItemHandler := handlers.NewComponentItemHandler(appDeps.ComponentItemService, appDeps.ComponentService)
 	categoryHandler := handlers.NewCategoryHandler(appDeps.CategoryService)             // Novo manipulador para categorias
 	siteCategoryHandler := handlers.NewSiteCategoryHandler(appDeps.SiteCategoryService) // Handler para categorias de sites
+	cityHandler := handlers.NewCityHandler(appDeps.CityService)                         // Handler para cidades
 	// Usa setupAuthRoutes para configurar rotas de autenticação (apenas login e refresh agora)
 	setupAuthRoutes(router, appDeps.JWTMiddleware) // Definir grupo base da API protegido
 	api := router.Group("/api")
@@ -66,9 +67,11 @@ func SetupRoutes(router *gin.Engine, deps interface{}) {
 
 	// Rota genérica para buscar sites (por user_id ou category_id)
 	router.GET("/api/sites", siteHandler.GetSites)
-
 	// Rotas para categorias
 	router.GET("/api/categories/active", categoryHandler.GetActiveCategories)
+
+	// Rotas para cidades
+	router.GET("/api/cities", cityHandler.GetAll)
 }
 
 // setupHealthRoutes configura rotas de health check

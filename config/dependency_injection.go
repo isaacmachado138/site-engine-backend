@@ -18,6 +18,7 @@ type AppDependencies struct {
 	ComponentItemService    *services.ComponentItemService
 	CategoryService         *services.CategoryService
 	SiteCategoryService     *services.SiteCategoryService
+	CityService             *services.CityService
 	JWTMiddleware           *jwt.GinJWTMiddleware
 }
 
@@ -31,19 +32,24 @@ func SetupDependencies(db *gorm.DB, cfg *Config) *AppDependencies {
 	componentTypeSettingRepo := repositories.NewComponentTypeSettingRepository(db)
 	categoryRepo := repositories.NewCategoryRepository(db)
 	siteCategoryRepo := repositories.NewSiteCategoryRepository(db)
+	cityRepo := repositories.NewCityRepository(db)
 
 	userService := services.NewUserService(userRepo)
 	categoryService := services.NewCategoryService(categoryRepo)
 	siteCategoryService := services.NewSiteCategoryService(siteCategoryRepo)
+	cityService := services.NewCityService(cityRepo)
 	jwtMiddleware, _ := middlewares.SetupJWTMiddleware(userService, cfg.JWTSecret)
+
 	return &AppDependencies{
 		UserService:             userService,
 		SiteService:             services.NewSiteService(siteRepo, moduleRepo, componentRepo),
 		ModuleService:           services.NewModuleService(moduleRepo, siteRepo),
 		ComponentService:        services.NewComponentService(componentRepo, componentTypeSettingRepo, componentSettingRepo, siteRepo),
 		ComponentSettingService: services.NewComponentSettingService(componentSettingRepo),
-		ComponentItemService:    services.NewComponentItemService(componentItemRepo), CategoryService: categoryService,
-		SiteCategoryService: siteCategoryService,
-		JWTMiddleware:       jwtMiddleware,
+		ComponentItemService:    services.NewComponentItemService(componentItemRepo),
+		CategoryService:         categoryService,
+		SiteCategoryService:     siteCategoryService,
+		CityService:             cityService,
+		JWTMiddleware:           jwtMiddleware,
 	}
 }
