@@ -46,6 +46,7 @@ func (s *ComponentItemService) FindByComponentID(componentID uint) ([]dtos.Compo
 			ComponentItemText:         i.ComponentItemText,
 			ComponentItemImage:        i.ComponentItemImage,
 			ComponentItemOrder:        i.ComponentItemOrder,
+			ComponentItemLink:         i.ComponentItemLink,
 		})
 	}
 	return dtosItems, nil
