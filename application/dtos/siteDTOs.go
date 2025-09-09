@@ -9,6 +9,8 @@ type SiteCreateDTO struct {
 	SiteKeywords      string `json:"site_keywords"`
 	SitePhoneWhatsapp string `json:"site_phone_whatsapp"`
 	SitePhone         string `json:"site_phone"`
+	SiteInstagram     string `json:"site_instagram"`
+	SiteFacebook      string `json:"site_facebook"`
 	UserID            uint   `json:"user_id" binding:"required"`
 	SiteIconWindow    string `json:"site_icon_window"`
 }
@@ -25,6 +27,8 @@ type SiteResponseDTO struct {
 	SiteKeywords      string `json:"site_keywords"`
 	SitePhoneWhatsapp string `json:"site_phone_whatsapp"`
 	SitePhone         string `json:"site_phone"`
+	SiteInstagram     string `json:"site_instagram"`
+	SiteFacebook      string `json:"site_facebook"`
 	UserID            uint   `json:"user_id"`
 	SiteIconWindow    string `json:"site_icon_window"`
 }
@@ -41,6 +45,8 @@ type SiteFullResponseDTO struct {
 	SiteKeywords      string                    `json:"site_keywords"`
 	SitePhoneWhatsapp string                    `json:"site_phone_whatsapp"`
 	SitePhone         string                    `json:"site_phone"`
+	SiteInstagram     string                    `json:"site_instagram"`
+	SiteFacebook      string                    `json:"site_facebook"`
 	SiteIconWindow    string                    `json:"site_icon_window"`
 	Modules           []ModuleWithComponentsDTO `json:"modules"`
 	Navbar            *ComponentDTO             `json:"navbar,omitempty"`
@@ -96,6 +102,8 @@ type SiteUpdateDTO struct {
 	SiteKeywords      *string `json:"site_keywords,omitempty"`
 	SitePhoneWhatsapp *string `json:"site_phone_whatsapp,omitempty"`
 	SitePhone         *string `json:"site_phone,omitempty"`
+	SiteInstagram     *string `json:"site_instagram,omitempty"`
+	SiteFacebook      *string `json:"site_facebook,omitempty"`
 	UserID            *uint   `json:"user_id,omitempty"`
 	SiteIconWindow    *string `json:"site_icon_window,omitempty"`
 }

@@ -12,6 +12,8 @@ type Site struct {
 	Keywords       string     `gorm:"column:site_keywords;type:text"`
 	PhoneWhatsapp  string     `gorm:"column:site_phone_whatsapp;size:50"`
 	Phone          string     `gorm:"column:site_phone;size:50"`
+	Instagram      string     `gorm:"column:site_instagram;size:255"`
+	Facebook       string     `gorm:"column:site_facebook;size:255"`
 	UserID         uint       `gorm:"column:user_id;not null"`
 	User           User       `gorm:"foreignKey:UserID;references:user_id"`
 	Modules        []Module   `gorm:"foreignKey:SiteID;references:site_id"`

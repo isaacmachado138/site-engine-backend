@@ -36,6 +36,8 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 		Phone:          siteDTO.SitePhone,
 		UserID:         siteDTO.UserID,
 		SiteIconWindow: siteDTO.SiteIconWindow,
+		Instagram:      siteDTO.SiteInstagram,
+		Facebook:       siteDTO.SiteFacebook,
 	}
 
 	if err := s.siteRepository.Create(site); err != nil {
@@ -60,6 +62,8 @@ func (s *SiteService) Create(siteDTO dtos.SiteCreateDTO) (*dtos.SiteResponseDTO,
 		SitePhone:         site.Phone,
 		UserID:            site.UserID,
 		SiteIconWindow:    site.SiteIconWindow,
+		SiteInstagram:     site.Instagram,
+		SiteFacebook:      site.Facebook,
 	}, nil
 }
 
@@ -214,6 +218,8 @@ func (s *SiteService) GetBySlug(slug string, onlyActive ...int) (*dtos.SiteFullR
 		SitePhoneWhatsapp: site.PhoneWhatsapp,
 		SitePhone:         site.Phone,
 		SiteIconWindow:    site.SiteIconWindow,
+		SiteInstagram:     site.Instagram,
+		SiteFacebook:      site.Facebook,
 		Modules:           modulesWithComponents,
 		Navbar:            navbarDTO,
 		Footer:            footerDTO,
@@ -248,6 +254,8 @@ func (s *SiteService) GetSitesByUser(userId string) ([]dtos.SiteResponseDTO, err
 			SitePhoneWhatsapp: site.PhoneWhatsapp,
 			SitePhone:         site.Phone,
 			SiteIconWindow:    site.SiteIconWindow,
+			SiteInstagram:     site.Instagram,
+			SiteFacebook:      site.Facebook,
 			UserID:            site.UserID,
 		})
 	}
@@ -290,6 +298,12 @@ func (s *SiteService) Update(siteID uint, updateDTO dtos.SiteUpdateDTO) (*dtos.S
 	if updateDTO.SiteIconWindow != nil {
 		site.SiteIconWindow = *updateDTO.SiteIconWindow
 	}
+	if updateDTO.SiteInstagram != nil {
+		site.Instagram = *updateDTO.SiteInstagram
+	}
+	if updateDTO.SiteFacebook != nil {
+		site.Facebook = *updateDTO.SiteFacebook
+	}
 	if err := s.siteRepository.Update(site); err != nil {
 		return nil, err
 	}
@@ -312,6 +326,8 @@ func (s *SiteService) Update(siteID uint, updateDTO dtos.SiteUpdateDTO) (*dtos.S
 		SitePhone:         site.Phone,
 		UserID:            site.UserID,
 		SiteIconWindow:    site.SiteIconWindow,
+		SiteInstagram:     site.Instagram,
+		SiteFacebook:      site.Facebook,
 	}, nil
 }
 
@@ -358,6 +374,8 @@ func (s *SiteService) GetSitesWithFilters(filters repositories.SiteFilters) ([]d
 			SitePhoneWhatsapp: site.PhoneWhatsapp,
 			SitePhone:         site.Phone,
 			SiteIconWindow:    site.SiteIconWindow,
+			SiteInstagram:     site.Instagram,
+			SiteFacebook:      site.Facebook,
 			UserID:            site.UserID,
 		})
 	}
